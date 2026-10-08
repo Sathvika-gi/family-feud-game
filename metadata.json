@@ -1,0 +1,6 @@
+{
+  "name": "Studio Primetime - Real-Time Family Feud Game Show",
+  "description": "Live real-time broadcast game show platform for Family Feud with host admin console, stage gameboard display, multi-team scoring, sound effects, and instant state synchronization.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

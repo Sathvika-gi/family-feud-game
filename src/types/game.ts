@@ -57,6 +57,7 @@ export type GameState = {
   questions: Question[];
   fastMoney: FastMoneyState;
   updatedAt: number;
+  winnerTeamId?: string | null;
   lastSfx?: {
     id: string;
     sound: 'ding' | 'buzz' | 'strike3' | 'bell' | 'fanfare';
@@ -72,6 +73,8 @@ export type GameAction =
   | { type: 'REVEAL_ALL_ANSWERS' }
   | { type: 'HIDE_ALL_ANSWERS' }
   | { type: 'AWARD_POT_TO_TEAM'; teamId: string }
+  | { type: 'TRIGGER_FINAL_CALL'; teamId: string }
+  | { type: 'CLEAR_FINAL_CALL' }
   | { type: 'AWARD_ANSWER_TO_TEAM'; answerId: string; teamId: string }
   | { type: 'ADJUST_TEAM_SCORE'; teamId: string; delta: number }
   | { type: 'SET_TEAM_SCORE'; teamId: string; score: number }

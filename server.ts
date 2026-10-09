@@ -132,6 +132,15 @@ function applyGameAction(game: GameState, action: GameAction): GameState {
       }
       break;
     }
+    case 'TRIGGER_FINAL_CALL': {
+      game.winnerTeamId = action.teamId;
+      game.lastSfx = { id: Math.random().toString(), sound: 'fanfare', timestamp: Date.now() };
+      break;
+    }
+    case 'CLEAR_FINAL_CALL': {
+      game.winnerTeamId = null;
+      break;
+    }
     case 'AWARD_ANSWER_TO_TEAM': {
       if (currentQ) {
         const ans = currentQ.answers.find((a) => a.id === action.answerId);

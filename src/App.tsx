@@ -5,64 +5,60 @@
 
 import React, { useState, useEffect } from 'react';
 import { GameProvider } from './context/GameContext';
-import { Header } from './components/Header';
 import { HostConsole } from './components/HostConsole';
 import { StageGameboard } from './components/StageGameboard';
-import { FastMoney } from './components/FastMoney';
-import { SurveyBankModal } from './components/SurveyBankModal';
-import { GameSessionModal } from './components/GameSessionModal';
 
 function MainApp() {
-  const [currentTab, setCurrentTab] = useState<'host' | 'stage' | 'fast_money'>(() => {
+  const [currentView, setCurrentView] = useState<'host' | 'stage'>(() => {
     if (typeof window !== 'undefined') {
       const params = new URLSearchParams(window.location.search);
-      const tab = params.get('tab');
-      if (tab === 'stage' || tab === 'fast_money' || tab === 'host') {
-        return tab;
+      const tab = params.get('tab') || params.get('view');
+      if (tab === 'stage') {
+        return 'stage';
+      }
+      if (window.location.pathname.toLowerCase() === '/stage') {
+        return 'stage';
       }
     }
     return 'host';
   });
 
-  const [isSurveyBankOpen, setIsSurveyBankOpen] = useState(false);
-  const [isSessionModalOpen, setIsSessionModalOpen] = useState(false);
-
-  // Sync tab change with URL query parameter without page reload
-  const handleTabChange = (tab: 'host' | 'stage' | 'fast_money') => {
-    setCurrentTab(tab);
+  // Sync route change with URL query parameter
+  const handleViewChange = (view: 'host' | 'stage') => {
+    setCurrentView(view);
     if (typeof window !== 'undefined') {
       const url = new URL(window.location.href);
-      url.searchParams.set('tab', tab);
-      window.history.replaceState({}, '', url.toString());
+      url.searchParams.set('tab', view);
+      window.history.pushState({}, '', url.toString());
     }
   };
 
+  // Listen to browser back/forward buttons
+  useEffect(() => {
+    const handlePopState = () => {
+      const params = new URLSearchParams(window.location.search);
+      const tab = params.get('tab') || params.get('view');
+      if (tab === 'stage') {
+        setCurrentView('stage');
+      } else {
+        setCurrentView('host');
+      }
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
   return (
     <div className="min-h-screen bg-[#0e1320] text-[#dee2f5] flex flex-col font-space selection:bg-[#ffb800] selection:text-black">
-      <Header
-        currentTab={currentTab}
-        setCurrentTab={handleTabChange}
-        openSurveyBank={() => setIsSurveyBankOpen(true)}
-        openSessionModal={() => setIsSessionModalOpen(true)}
-      />
-
-      <main className="flex-1 pb-10">
-        {currentTab === 'host' && (
-          <HostConsole openSurveyBank={() => setIsSurveyBankOpen(true)} />
+      <main className="flex-1">
+        {currentView === 'host' ? (
+          <HostConsole onSwitchToStage={() => handleViewChange('stage')} />
+        ) : (
+          <div className="pt-2">
+            <StageGameboard onSwitchToHost={() => handleViewChange('host')} />
+          </div>
         )}
-        {currentTab === 'stage' && <StageGameboard />}
-        {currentTab === 'fast_money' && <FastMoney />}
       </main>
-
-      <SurveyBankModal
-        isOpen={isSurveyBankOpen}
-        onClose={() => setIsSurveyBankOpen(false)}
-      />
-
-      <GameSessionModal
-        isOpen={isSessionModalOpen}
-        onClose={() => setIsSessionModalOpen(false)}
-      />
     </div>
   );
 }

@@ -22,6 +22,8 @@ type GameContextType = {
   revealAllAnswers: () => void;
   hideAllAnswers: () => void;
   awardPotToTeam: (teamId: string) => void;
+  triggerFinalCall: (teamId: string) => void;
+  clearFinalCall: () => void;
   awardAnswerToTeam: (answerId: string, teamId: string) => void;
   adjustTeamScore: (teamId: string, delta: number) => void;
   setTeamScore: (teamId: string, score: number) => void;
@@ -243,6 +245,22 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
   const revealAllAnswers = () => dispatchAction({ type: 'REVEAL_ALL_ANSWERS' });
   const hideAllAnswers = () => dispatchAction({ type: 'HIDE_ALL_ANSWERS' });
   const awardPotToTeam = (teamId: string) => dispatchAction({ type: 'AWARD_POT_TO_TEAM', teamId });
+  const triggerFinalCall = (teamId: string) => {
+    setGameState((prev) => ({
+      ...prev,
+      winnerTeamId: teamId,
+      lastSfx: { id: Math.random().toString(), sound: 'fanfare', timestamp: Date.now() },
+    }));
+    playSfx('fanfare');
+    dispatchAction({ type: 'TRIGGER_FINAL_CALL', teamId });
+  };
+  const clearFinalCall = () => {
+    setGameState((prev) => ({
+      ...prev,
+      winnerTeamId: null,
+    }));
+    dispatchAction({ type: 'CLEAR_FINAL_CALL' });
+  };
   const awardAnswerToTeam = (answerId: string, teamId: string) =>
     dispatchAction({ type: 'AWARD_ANSWER_TO_TEAM', answerId, teamId });
   const adjustTeamScore = (teamId: string, delta: number) =>
@@ -287,6 +305,8 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
         revealAllAnswers,
         hideAllAnswers,
         awardPotToTeam,
+        triggerFinalCall,
+        clearFinalCall,
         awardAnswerToTeam,
         adjustTeamScore,
         setTeamScore,

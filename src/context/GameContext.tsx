@@ -57,7 +57,7 @@ const initialFallbackState: GameState = {
       captain: 'Marcus',
       members: 'Marcus (Captain), Angela, David, Maya, Trey',
       strikes: 2,
-      color: '#00e3fd',
+      color: '#FFB800',
     },
     {
       id: 'team-2',

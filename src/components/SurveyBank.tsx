@@ -169,17 +169,19 @@ export function SurveyBank() {
   );
 
   return (
-    <section className="bg-[#171b29] border border-[#252a38] rounded-xl p-5 shadow-lg space-y-4">
+    <section className="bg-[#000000] border-2 border-[#E2E8F0]/20 rounded-[26px] p-5 md:p-6 shadow-2xl space-y-4">
       {/* Header bar */}
-      <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-[#252a38]">
-        <div className="flex items-center space-x-2.5">
-          <FolderOpen className="w-5 h-5 text-[#ffb800]" />
+      <div className="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-[#E2E8F0]/20">
+        <div className="flex items-center space-x-3">
+          <div className="w-10 h-10 rounded-[10px] bg-[#000000] border border-[#FFB800]/60 flex items-center justify-center">
+            <FolderOpen className="w-5 h-5 text-[#FFB800]" />
+          </div>
           <div>
-            <h2 className="font-bebas text-xl md:text-2xl text-[#ffdca1] tracking-wider leading-none">
+            <h2 className="font-bebas text-xl md:text-2xl text-[#FFFFFF] tracking-wider leading-none">
               SURVEY BANK & CSV REPOSITORY
             </h2>
-            <div className="text-[11px] font-mono-score text-[#9e8f78] mt-0.5">
-              FEED CSV WITH HEADERS: <span className="text-[#00e3fd] font-bold">Question ID,Question,Rank,Answer,Points</span>
+            <div className="text-xs font-mono-score text-[#E2E8F0]/70 mt-1">
+              Required CSV headers: <span className="text-[#FFB800] font-bold">Question ID,Question,Rank,Answer,Points</span>
             </div>
           </div>
         </div>
@@ -188,36 +190,36 @@ export function SurveyBank() {
           {/* Shuffle / Randomize Button */}
           <button
             onClick={handleRandomizeQuestion}
-            className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-[#252a38] hover:bg-[#343948] text-[#ffdca1] text-xs font-bold border border-[#ffb800]/50 shadow-md transition-all active:scale-95 hover:border-[#ffb800]"
+            className="flex items-center space-x-1.5 px-3.5 py-2 rounded-[10px] bg-[#000000] hover:bg-[#111111] text-[#FFB800] text-xs font-bold border border-[#FFB800] shadow-md transition-all active:scale-95"
             title="Pick and load a random survey question onto Stage"
           >
-            <Shuffle className="w-3.5 h-3.5 text-[#ffb800]" />
-            <span>🎲 Randomize / Shuffle to Stage</span>
+            <Shuffle className="w-3.5 h-3.5 text-[#FFB800]" />
+            <span>Randomize Question</span>
           </button>
 
           <button
             onClick={handleDownloadSample}
-            className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-[#252a38] hover:bg-[#343948] text-[#dee2f5] text-xs font-semibold border border-[#514532] transition-colors"
+            className="flex items-center space-x-1.5 px-3.5 py-2 rounded-[10px] bg-[#000000] hover:bg-[#111111] text-[#FFFFFF] text-xs font-semibold border border-[#E2E8F0]/30 transition-colors"
             title="Download CSV sample file"
           >
-            <Download className="w-3.5 h-3.5 text-[#ffb800]" />
+            <Download className="w-3.5 h-3.5 text-[#FFB800]" />
             <span className="hidden sm:inline">CSV Template</span>
           </button>
 
           <button
             onClick={() => setShowPasteModal(true)}
-            className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-[#252a38] hover:bg-[#343948] text-[#dee2f5] text-xs font-semibold border border-[#514532] transition-colors"
+            className="flex items-center space-x-1.5 px-3.5 py-2 rounded-[10px] bg-[#000000] hover:bg-[#111111] text-[#FFFFFF] text-xs font-semibold border border-[#E2E8F0]/30 transition-colors"
             title="Paste CSV text directly"
           >
-            <FileText className="w-3.5 h-3.5 text-[#00e3fd]" />
+            <FileText className="w-3.5 h-3.5 text-[#FFB800]" />
             <span>Paste CSV</span>
           </button>
 
           <button
             onClick={() => fileInputRef.current?.click()}
-            className="flex items-center space-x-1.5 px-3.5 py-1.5 rounded-lg bg-[#ffb800] hover:bg-[#ffc633] text-black text-xs font-bold uppercase transition-colors shadow-md"
+            className="flex items-center space-x-1.5 px-4 py-2 rounded-[10px] bg-[#FFB800] hover:bg-[#FFC633] text-[#000000] text-xs font-bold uppercase transition-colors shadow-md"
           >
-            <UploadCloud className="w-4 h-4" />
+            <UploadCloud className="w-4 h-4 text-[#000000]" />
             <span>Upload CSV</span>
           </button>
 
@@ -238,16 +240,16 @@ export function SurveyBank() {
       {/* Alert / Feedback message */}
       {feedback && (
         <div
-          className={`px-4 py-2.5 rounded-lg text-xs font-semibold flex items-center space-x-2 ${
+          className={`px-4 py-3 rounded-[10px] text-xs font-semibold flex items-center space-x-2.5 ${
             feedback.type === 'success'
-              ? 'bg-[#00e3fd]/15 border border-[#00e3fd]/40 text-[#bdf4ff]'
-              : 'bg-[#93000a]/20 border border-[#ef4444]/60 text-[#ffb4ab]'
+              ? 'bg-[#000000] border-2 border-[#FFB800] text-[#FFFFFF]'
+              : 'bg-[#000000] border-2 border-red-500 text-red-300'
           }`}
         >
           {feedback.type === 'success' ? (
-            <Check className="w-4 h-4 text-[#00e3fd]" />
+            <Check className="w-4 h-4 text-[#FFB800]" />
           ) : (
-            <AlertCircle className="w-4 h-4 text-[#ef4444]" />
+            <AlertCircle className="w-4 h-4 text-red-500" />
           )}
           <span>{feedback.message}</span>
         </div>
@@ -267,19 +269,19 @@ export function SurveyBank() {
           if (file) handleFileUpload(file);
         }}
         onClick={() => fileInputRef.current?.click()}
-        className={`p-4 rounded-xl border-2 border-dashed cursor-pointer text-center transition-all ${
+        className={`p-5 rounded-[10px] border-2 border-dashed cursor-pointer text-center transition-all ${
           isDragging
-            ? 'border-[#ffb800] bg-[#ffb800]/10 scale-[1.01]'
-            : 'border-[#303443] hover:border-[#ffb800]/60 bg-[#0e1320]/60'
+            ? 'border-[#FFB800] bg-[#FFB800]/10 scale-[1.01]'
+            : 'border-[#E2E8F0]/30 hover:border-[#FFB800] bg-[#000000]'
         }`}
       >
-        <div className="flex flex-col items-center justify-center space-y-1">
-          <FileSpreadsheet className="w-6 h-6 text-[#ffb800]" />
-          <div className="text-xs font-semibold text-[#dee2f5]">
-            Drag & Drop your <span className="text-[#ffdca1] font-bold">.CSV file</span> here or click to browse
+        <div className="flex flex-col items-center justify-center space-y-1.5">
+          <FileSpreadsheet className="w-7 h-7 text-[#FFB800]" />
+          <div className="text-xs font-semibold text-[#FFFFFF]">
+            Drag and drop your <span className="text-[#FFB800] font-bold">.CSV file</span> here or click to browse
           </div>
-          <div className="text-[10px] font-mono-score text-[#9e8f78]">
-            CSV format: <span className="text-[#00e3fd]">Question ID, Question, Rank, Answer, Points</span> (Supports up to 8 answers per question)
+          <div className="text-[11px] font-mono-score text-[#E2E8F0]/70">
+            CSV format: <span className="text-[#FFB800]">Question ID, Question, Rank, Answer, Points</span> (Supports up to 8 answers per question)
           </div>
         </div>
       </div>
@@ -287,26 +289,26 @@ export function SurveyBank() {
       {/* Search and Counts */}
       <div className="flex flex-wrap items-center justify-between gap-3 pt-1">
         <div className="relative flex-1 min-w-[240px]">
-          <Search className="w-4 h-4 absolute left-3 top-2.5 text-[#9e8f78]" />
+          <Search className="w-4 h-4 absolute left-3 top-2.5 text-[#E2E8F0]/50" />
           <input
             type="text"
             placeholder="Search survey questions or answers..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full bg-[#0e1320] border border-[#303443] rounded-lg pl-9 pr-4 py-2 text-xs text-[#dee2f5] focus:outline-none focus:border-[#ffb800]"
+            className="w-full bg-[#000000] border border-[#E2E8F0]/30 rounded-[10px] pl-9 pr-4 py-2 text-xs text-[#FFFFFF] placeholder-[#E2E8F0]/50 focus:outline-none focus:border-[#FFB800]"
           />
         </div>
 
-        <div className="flex items-center space-x-3 text-xs font-mono-score text-[#9e8f78]">
+        <div className="flex items-center space-x-3 text-xs font-mono-score text-[#E2E8F0]/80">
           <span>
-            BANK CONTAINS: <strong className="text-[#ffdca1]">{questions.length} QUESTIONS</strong>
+            Bank questions: <strong className="text-[#FFB800]">{questions.length}</strong>
           </span>
           <button
             onClick={handleResetToDefaults}
-            className="text-[11px] text-[#9e8f78] hover:text-[#dee2f5] underline flex items-center space-x-1"
+            className="text-[11px] text-[#E2E8F0]/70 hover:text-[#FFFFFF] underline flex items-center space-x-1"
             title="Restore original sample questions"
           >
-            <RefreshCw className="w-3 h-3" />
+            <RefreshCw className="w-3 h-3 text-[#FFB800]" />
             <span>Restore Defaults</span>
           </button>
         </div>
@@ -315,7 +317,7 @@ export function SurveyBank() {
       {/* Surveys List */}
       <div className="space-y-3 max-h-[480px] overflow-y-auto pr-1">
         {filtered.length === 0 ? (
-          <div className="p-8 text-center bg-[#0e1320] rounded-xl border border-[#252a38] text-[#9e8f78]">
+          <div className="p-8 text-center bg-[#000000] rounded-[10px] border border-[#E2E8F0]/20 text-[#E2E8F0]/60">
             <p className="text-sm font-semibold">No survey questions match your search.</p>
             <p className="text-xs mt-1">Upload a CSV or reset to defaults above.</p>
           </div>
@@ -325,18 +327,18 @@ export function SurveyBank() {
             return (
               <div
                 key={q.id}
-                className={`p-3.5 rounded-xl border transition-all ${
+                className={`p-4 rounded-[10px] border-2 transition-all ${
                   isCurrentlyActive
-                    ? 'bg-[#1b1f2d] border-[#00e3fd] shadow-[0_0_15px_rgba(0,227,253,0.15)]'
-                    : 'bg-[#0e1320] border-[#252a38] hover:border-[#ffb800]/50'
+                    ? 'bg-[#000000] border-[#FFB800] shadow-[0_0_20px_rgba(255,184,0,0.25)]'
+                    : 'bg-[#000000] border-[#E2E8F0]/20 hover:border-[#FFB800]/50'
                 }`}
               >
-                <div className="flex flex-wrap items-center justify-between gap-2 mb-2.5">
-                  <div className="flex items-center space-x-2 flex-1 min-w-[260px]">
-                    <span className="text-[11px] font-mono-score font-bold bg-[#171b29] text-[#ffdca1] px-2 py-0.5 rounded border border-[#303443]">
+                <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
+                  <div className="flex items-center space-x-2.5 flex-1 min-w-[260px]">
+                    <span className="text-xs font-mono-score font-bold bg-[#000000] text-[#FFB800] px-2.5 py-0.5 rounded-[3px] border border-[#FFB800]/40">
                       {q.surveyId}
                     </span>
-                    <h3 className="font-bebas text-lg md:text-xl text-[#ffffff] tracking-wide">
+                    <h3 className="font-bebas text-lg md:text-xl text-[#FFFFFF] tracking-wide">
                       {q.text}
                     </h3>
                   </div>
@@ -345,46 +347,46 @@ export function SurveyBank() {
                     <button
                       onClick={() => handleSelectQuestion(q)}
                       disabled={isCurrentlyActive}
-                      className={`px-3.5 py-1.5 rounded-lg text-xs font-bold uppercase transition-all flex items-center space-x-1.5 ${
+                      className={`px-4 py-2 rounded-[10px] text-xs font-bold uppercase transition-all flex items-center space-x-1.5 ${
                         isCurrentlyActive
-                          ? 'bg-[#00e3fd]/20 text-[#00e3fd] border border-[#00e3fd]/40 cursor-default'
-                          : 'bg-[#ffb800] hover:bg-[#ffc633] text-black shadow-md active:scale-95'
+                          ? 'bg-[#000000] text-[#FFB800] border-2 border-[#FFB800] cursor-default'
+                          : 'bg-[#FFB800] hover:bg-[#FFC633] text-[#000000] shadow-md active:scale-95'
                       }`}
                     >
                       {isCurrentlyActive ? (
                         <>
                           <Check className="w-3.5 h-3.5" />
-                          <span>ACTIVE ON STAGE</span>
+                          <span>Active on Stage</span>
                         </>
                       ) : (
                         <>
-                          <Sparkles className="w-3.5 h-3.5 text-black" />
-                          <span>⚡ LOAD ONTO STAGE</span>
+                          <Sparkles className="w-3.5 h-3.5 text-[#000000]" />
+                          <span>Load onto Stage</span>
                         </>
                       )}
                     </button>
 
                     <button
                       onClick={() => handleDeleteQuestion(q.id)}
-                      className="p-1.5 rounded-lg bg-[#171b29] hover:bg-[#93000a]/40 text-[#9e8f78] hover:text-[#ffdad6] border border-[#303443] hover:border-[#ef4444]/60 transition-colors"
+                      className="p-2 rounded-[10px] bg-[#000000] hover:bg-red-950/40 text-[#E2E8F0]/70 hover:text-red-400 border border-[#E2E8F0]/20 hover:border-red-500/50 transition-colors"
                       title="Delete this question from Survey Bank"
                     >
-                      <Trash2 className="w-4 h-4 text-[#ef4444]" />
+                      <Trash2 className="w-4 h-4 text-red-400" />
                     </button>
                   </div>
                 </div>
 
                 {/* Answers preview grid */}
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 pt-2 border-t border-[#252a38] text-xs font-mono-score">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-3 border-t border-[#E2E8F0]/20 text-xs font-mono-score">
                   {q.answers.map((a) => (
                     <div
                       key={a.id}
-                      className="flex items-center justify-between bg-[#171b29] px-2.5 py-1 rounded border border-[#303443]/80"
+                      className="flex items-center justify-between bg-[#000000] px-3 py-1.5 rounded-[3px] border border-[#E2E8F0]/25"
                     >
-                      <span className="text-[#dee2f5] truncate font-bebas text-sm">
+                      <span className="text-[#FFFFFF] truncate font-bebas text-sm">
                         {a.rank}. {a.text}
                       </span>
-                      <span className="text-[#ffb800] font-bold ml-1.5 text-xs">{a.points}</span>
+                      <span className="text-[#FFB800] font-bold ml-2 text-xs">{a.points}</span>
                     </div>
                   ))}
                 </div>
@@ -396,20 +398,20 @@ export function SurveyBank() {
 
       {/* Paste CSV Modal */}
       {showPasteModal && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-[#171b29] border border-[#ffb800]/60 rounded-2xl w-full max-w-2xl p-5 shadow-2xl space-y-4">
-            <div className="flex items-center justify-between border-b border-[#252a38] pb-3">
+        <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="bg-[#000000] border-2 border-[#FFB800] rounded-[26px] w-full max-w-2xl p-6 shadow-2xl space-y-4">
+            <div className="flex items-center justify-between border-b border-[#E2E8F0]/20 pb-3">
               <div>
-                <h3 className="font-bebas text-xl text-[#ffdca1] tracking-wider">
+                <h3 className="font-bebas text-xl text-[#FFFFFF] tracking-wider">
                   PASTE RAW CSV DATA
                 </h3>
-                <div className="text-xs text-[#9e8f78]">
-                  Expected columns: Question ID, Question, Rank, Answer, Points
+                <div className="text-xs text-[#E2E8F0]/70">
+                  Required columns: Question ID, Question, Rank, Answer, Points
                 </div>
               </div>
               <button
                 onClick={() => setShowPasteModal(false)}
-                className="text-[#9e8f78] hover:text-white"
+                className="text-[#E2E8F0]/70 hover:text-white text-lg font-bold"
               >
                 ✕
               </button>
@@ -420,27 +422,27 @@ export function SurveyBank() {
               placeholder={`Question ID,Question,Rank,Answer,Points\n1,NAME A COMMON PET,1,DOG,45\n1,NAME A COMMON PET,2,CAT,35\n1,NAME A COMMON PET,3,FISH,12`}
               value={pasteText}
               onChange={(e) => setPasteText(e.target.value)}
-              className="w-full bg-[#0e1320] border border-[#303443] rounded-lg p-3 font-mono-score text-xs text-[#dee2f5] focus:outline-none focus:border-[#ffb800]"
+              className="w-full bg-[#000000] border border-[#E2E8F0]/30 rounded-[10px] p-3 font-mono-score text-xs text-[#FFFFFF] focus:outline-none focus:border-[#FFB800]"
             />
 
             <div className="flex items-center justify-between">
               <button
                 onClick={() => setPasteText(SAMPLE_SURVEY_CSV)}
-                className="text-xs text-[#00e3fd] hover:underline"
+                className="text-xs text-[#FFB800] hover:underline font-semibold"
               >
                 Fill with Sample CSV
               </button>
               <div className="flex space-x-2">
                 <button
                   onClick={() => setShowPasteModal(false)}
-                  className="px-4 py-2 rounded-lg bg-[#252a38] hover:bg-[#343948] text-xs font-semibold text-[#dee2f5]"
+                  className="px-4 py-2 rounded-[10px] bg-[#000000] hover:bg-[#111111] text-xs font-semibold text-[#FFFFFF] border border-[#E2E8F0]/30"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={() => processCSVText(pasteText, 'Pasted Text')}
                   disabled={!pasteText.trim()}
-                  className="px-4 py-2 rounded-lg bg-[#ffb800] hover:bg-[#ffc633] text-black text-xs font-bold uppercase disabled:opacity-50"
+                  className="px-4 py-2 rounded-[10px] bg-[#FFB800] hover:bg-[#FFC633] text-[#000000] text-xs font-bold uppercase disabled:opacity-50"
                 >
                   Parse & Import
                 </button>

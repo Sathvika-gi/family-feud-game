@@ -49,7 +49,7 @@ function MainApp() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#0e1320] text-[#dee2f5] flex flex-col font-space selection:bg-[#ffb800] selection:text-black">
+    <div className="min-h-screen bg-[#000000] text-[#FFFFFF] flex flex-col font-space selection:bg-[#FFB800] selection:text-black">
       <main className="flex-1">
         {currentView === 'host' ? (
           <HostConsole onSwitchToStage={() => handleViewChange('stage')} />

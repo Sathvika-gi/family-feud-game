@@ -358,8 +358,7 @@ export function SurveyBank() {
                         </>
                       ) : (
                         <>
-                          <Sparkles className="w-3.5 h-3.5 text-black" />
-                          <span>⚡ LOAD ONTO STAGE</span>
+                          <span>LOAD ONTO STAGE</span>
                         </>
                       )}
                     </button>

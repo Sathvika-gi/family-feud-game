@@ -26,26 +26,26 @@ function createInitialGameState(gameId: string): GameState {
     id: gameId,
     name: 'FAMILY FEUD STUDIO OPERATIONS',
     status: 'playing',
-    currentRound: 'r2',
-    roundMultiplier: 2,
+    currentRound: 'r1',
+    roundMultiplier: 1,
     currentQuestionIndex: 0,
-    currentTeamId: 'team-1',
+    currentTeamId: null,
     teams: [
       {
         id: 'team-1',
         name: 'THE JOHNSONS',
-        score: 142,
+        score: 0,
         captain: 'Marcus',
-        members: 'Marcus (Captain), Angela, David, Maya, Trey',
-        strikes: 2,
+        members: '',
+        strikes: 0,
         color: '#00e3fd',
       },
       {
         id: 'team-2',
         name: 'THE MILLERS',
-        score: 95,
+        score: 0,
         captain: 'Sarah',
-        members: 'Sarah (Captain), Kevin, Chloe, Liam, Brenda',
+        members: '',
         strikes: 0,
         color: '#ffb0b3',
       },
@@ -147,7 +147,7 @@ function applyGameAction(game: GameState, action: GameAction): GameState {
         const team = game.teams.find((t) => t.id === action.teamId);
         if (ans && team) {
           ans.revealed = true;
-          team.score += ans.points * game.roundMultiplier;
+          team.score += ans.points;
           game.lastSfx = { id: Math.random().toString(), sound: 'ding', timestamp: Date.now() };
         }
       }

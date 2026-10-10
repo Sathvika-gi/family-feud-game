@@ -58,8 +58,8 @@ export function HostConsole({ onSwitchToStage }: HostConsoleProps) {
 
   const surveyBankRef = useRef<HTMLDivElement>(null);
 
-  const team1 = gameState.teams[0] || { id: 'team-1', name: 'TEAM 1', score: 0, strikes: 0, color: '#00e3fd' };
-  const team2 = gameState.teams[1] || { id: 'team-2', name: 'TEAM 2', score: 0, strikes: 0, color: '#ffb800' };
+  const team1 = gameState.teams[0] || { id: 'team-1', name: 'TEAM 1', score: 0, strikes: 0, color: '#00e3fd', captain: '', members: '' };
+  const team2 = gameState.teams[1] || { id: 'team-2', name: 'TEAM 2', score: 0, strikes: 0, color: '#ffb800', captain: '', members: '' };
 
   const totalQuestionPoints =
     currentQuestion?.answers.reduce((acc, a) => acc + a.points, 0) || 0;
@@ -235,11 +235,12 @@ export function HostConsole({ onSwitchToStage }: HostConsoleProps) {
 
             <div>
               <label className="block text-[10px] uppercase font-bold text-[#9e8f78] mb-1">
-                CAPTAIN & MEMBERS (ROSTER)
+                MEMBERS (OPTIONAL)
               </label>
               <input
                 type="text"
-                value={team1.members}
+                placeholder="e.g. Alice, Bob, Charlie"
+                value={team1.members || ''}
                 onChange={(e) => updateTeamInfo(team1.id, { members: e.target.value })}
                 className="w-full bg-[#0e1320] border border-[#303443] rounded px-3 py-1 text-xs text-[#d5c4ab] focus:outline-none focus:border-[#00e3fd]"
               />
@@ -335,11 +336,12 @@ export function HostConsole({ onSwitchToStage }: HostConsoleProps) {
 
             <div>
               <label className="block text-[10px] uppercase font-bold text-[#9e8f78] mb-1">
-                CAPTAIN & MEMBERS (ROSTER)
+                MEMBERS (OPTIONAL)
               </label>
               <input
                 type="text"
-                value={team2.members}
+                placeholder="e.g. Alice, Bob, Charlie"
+                value={team2.members || ''}
                 onChange={(e) => updateTeamInfo(team2.id, { members: e.target.value })}
                 className="w-full bg-[#0e1320] border border-[#303443] rounded px-3 py-1 text-xs text-[#d5c4ab] focus:outline-none focus:border-[#ffb800]"
               />
@@ -383,11 +385,10 @@ export function HostConsole({ onSwitchToStage }: HostConsoleProps) {
               <button
                 onClick={() => handleFinalCall(team1.id)}
                 disabled={team1.score < team2.score}
-                className={`w-full py-2.5 px-3 rounded-lg font-bebas text-base md:text-lg tracking-wide flex items-center justify-center space-x-2 transition-all ${
-                  team1.score >= team2.score 
-                    ? 'bg-[#00e3fd] hover:bg-[#9cf0ff] text-black shadow-md active:scale-95' 
+                className={`w-full py-2.5 px-3 rounded-lg font-bebas text-base md:text-lg tracking-wide flex items-center justify-center space-x-2 transition-all ${team1.score >= team2.score
+                    ? 'bg-[#00e3fd] hover:bg-[#9cf0ff] text-black shadow-md active:scale-95'
                     : 'bg-[#00e3fd]/10 text-[#00e3fd]/30 border border-[#00e3fd]/20 cursor-not-allowed'
-                } ${gameState.winnerTeamId === team1.id ? 'ring-2 ring-white shadow-[0_0_20px_rgba(0,227,253,0.8)]' : ''}`}
+                  } ${gameState.winnerTeamId === team1.id ? 'ring-2 ring-white shadow-[0_0_20px_rgba(0,227,253,0.8)]' : ''}`}
                 title={team1.score >= team2.score ? `Trigger ${team1.name} as Final Winner on stage` : `Cannot select: ${team1.name} is losing on points`}
               >
                 <Trophy className={`w-4 h-4 ${team1.score >= team2.score ? 'text-black' : 'text-[#00e3fd]/30'}`} />
@@ -396,11 +397,10 @@ export function HostConsole({ onSwitchToStage }: HostConsoleProps) {
               <button
                 onClick={() => handleFinalCall(team2.id)}
                 disabled={team2.score < team1.score}
-                className={`w-full py-2.5 px-3 rounded-lg font-bebas text-base md:text-lg tracking-wide flex items-center justify-center space-x-2 transition-all ${
-                  team2.score >= team1.score 
-                    ? 'bg-[#ffb800] hover:bg-[#ffc633] text-black shadow-md active:scale-95' 
+                className={`w-full py-2.5 px-3 rounded-lg font-bebas text-base md:text-lg tracking-wide flex items-center justify-center space-x-2 transition-all ${team2.score >= team1.score
+                    ? 'bg-[#ffb800] hover:bg-[#ffc633] text-black shadow-md active:scale-95'
                     : 'bg-[#ffb800]/10 text-[#ffb800]/30 border border-[#ffb800]/20 cursor-not-allowed'
-                } ${gameState.winnerTeamId === team2.id ? 'ring-2 ring-white shadow-[0_0_20px_rgba(255,184,0,0.8)]' : ''}`}
+                  } ${gameState.winnerTeamId === team2.id ? 'ring-2 ring-white shadow-[0_0_20px_rgba(255,184,0,0.8)]' : ''}`}
                 title={team2.score >= team1.score ? `Trigger ${team2.name} as Final Winner on stage` : `Cannot select: ${team2.name} is losing on points`}
               >
                 <Trophy className={`w-4 h-4 ${team2.score >= team1.score ? 'text-black' : 'text-[#ffb800]/30'}`} />
@@ -595,7 +595,7 @@ export function HostConsole({ onSwitchToStage }: HostConsoleProps) {
                 <button
                   onClick={() => awardAnswerToTeam(answer.id, team1.id)}
                   className="px-3.5 py-1.5 min-w-[120px] rounded-lg bg-[#00e3fd]/15 hover:bg-[#00e3fd]/30 text-[#00e3fd] text-xs font-bold uppercase tracking-wider border border-[#00e3fd]/50 transition-all flex items-center justify-center space-x-1 shadow-sm active:scale-95"
-                  title={`Award ${answer.points * gameState.roundMultiplier} pts to ${team1.name}`}
+                  title={`Award ${answer.points} pts to ${team1.name}`}
                 >
                   <span className="text-[#00e3fd] font-extrabold">+</span>
                   <span className="truncate max-w-[150px]">{team1.name}</span>
@@ -603,7 +603,7 @@ export function HostConsole({ onSwitchToStage }: HostConsoleProps) {
                 <button
                   onClick={() => awardAnswerToTeam(answer.id, team2.id)}
                   className="px-3.5 py-1.5 min-w-[120px] rounded-lg bg-[#ffb800]/15 hover:bg-[#ffb800]/30 text-[#ffdca1] text-xs font-bold uppercase tracking-wider border border-[#ffb800]/50 transition-all flex items-center justify-center space-x-1 shadow-sm active:scale-95"
-                  title={`Award ${answer.points * gameState.roundMultiplier} pts to ${team2.name}`}
+                  title={`Award ${answer.points} pts to ${team2.name}`}
                 >
                   <span className="text-[#ffb800] font-extrabold">+</span>
                   <span className="truncate max-w-[150px]">{team2.name}</span>

@@ -51,8 +51,8 @@ export function StageGameboard({ onSwitchToHost }: StageGameboardProps = {}) {
 
   const [showStrikeOverlay, setShowStrikeOverlay] = useState(false);
 
-  const team1 = gameState.teams[0] || { id: 'team-1', name: 'TEAM 1', score: 0, strikes: 0, color: '#00e3fd' };
-  const team2 = gameState.teams[1] || { id: 'team-2', name: 'TEAM 2', score: 0, strikes: 0, color: '#ffb800' };
+  const team1 = gameState.teams[0] || { id: 'team-1', name: 'TEAM 1', score: 0, strikes: 0, color: '#00e3fd', members: '' };
+  const team2 = gameState.teams[1] || { id: 'team-2', name: 'TEAM 2', score: 0, strikes: 0, color: '#ffb800', members: '' };
 
   const isTeam1Winner = gameState.winnerTeamId === team1?.id;
   const isTeam2Winner = gameState.winnerTeamId === team2?.id;
@@ -189,7 +189,7 @@ export function StageGameboard({ onSwitchToHost }: StageGameboardProps = {}) {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 md:gap-6 items-stretch w-full flex-1">
         {/* LEFT POD: TEAM 1 */}
         <div
-          className={`lg:col-span-3 rounded-2xl p-4 md:p-6 relative overflow-hidden flex flex-col justify-between min-h-[580px] md:min-h-[640px] transition-all duration-300 ${isTeam1Winner
+          className={`lg:col-span-3 rounded-2xl p-4 md:p-6 relative overflow-hidden flex flex-col justify-between min-h-[480px] md:min-h-[540px] transition-all duration-300 ${isTeam1Winner
             ? 'bg-gradient-to-b from-[#092235] to-[#171b29] border-4 border-[#00e3fd] shadow-[0_0_30px_rgba(0,227,253,0.4)] ring-2 ring-[#00e3fd]/30'
             : isTeam1Active
               ? 'bg-[#171b29] border-2 border-[#00e3fd] shadow-[0_0_15px_rgba(0,227,253,0.2)] ring-1 ring-[#00e3fd]/20'
@@ -242,7 +242,7 @@ export function StageGameboard({ onSwitchToHost }: StageGameboardProps = {}) {
           </h2>
 
           {/* Stylized Family Portrait Graphic */}
-          <div className="relative w-full h-36 md:h-44 rounded-xl overflow-hidden bg-[#0e1320] border border-[#252a38] flex items-center justify-center p-3 my-2">
+          <div className="relative w-full h-20 md:h-24 rounded-xl overflow-hidden bg-[#0e1320] border border-[#252a38] flex items-center justify-center p-3 my-2">
             {isTeam1Winner && (
               <div className="absolute top-2 right-2 z-20 w-11 h-11 rounded-full bg-[#00e3fd] border-2 border-white flex items-center justify-center shadow-[0_0_10px_#00e3fd] animate-bounce">
                 <Trophy className="w-6 h-6 text-black fill-black" />
@@ -260,14 +260,20 @@ export function StageGameboard({ onSwitchToHost }: StageGameboardProps = {}) {
                   </div>
                 ))}
               </div> */}
-              <div className="text-xl font-space text-[#ffdca1] font-semibold text-center">
-                ● CAPTAIN: {team1.captain || 'MARCUS'}
-              </div>
+              {team1.members ? (
+                <div className="flex flex-col items-center w-full space-y-0.5 mt-1">
+                  {team1.members.split(',').map((member, i) => (
+                    <span key={i} className="text-base md:text-lg font-space text-[#ffdca1] font-semibold px-2 leading-tight uppercase">
+                      {member.trim()}
+                    </span>
+                  ))}
+                </div>
+              ) : null}
             </div>
           </div>
 
           {/* Score Display */}
-          <div className="text-center py-4 md:py-6 bg-[#0e1320] rounded-xl border border-[#303443] my-2">
+          <div className="text-center py-2 md:py-4 bg-[#0e1320] rounded-xl border border-[#303443] my-2">
             <div className="text-[11px] font-mono-score uppercase text-[#9e8f78] tracking-widest">
               TOTAL MATCH SCORE
             </div>
@@ -284,11 +290,11 @@ export function StageGameboard({ onSwitchToHost }: StageGameboardProps = {}) {
             <div className="flex items-center justify-between text-xs font-mono-score text-[#9e8f78]">
               <span>TEAM STRIKE</span>
               <span className={team1.strikes > 0 ? 'text-[#ef4444] font-bold' : 'text-[#9e8f78]'}>
-                {team1.strikes > 0 ? 'STRIKE INCURRED' : 'CLEAR'}
+                {team1.strikes > 0 ? 'STRIKE INCURRED' : ''}
               </span>
             </div>
             <div
-              className={`h-16 md:h-20 rounded-xl flex items-center justify-center font-bebas text-5xl md:text-6xl font-bold transition-all ${team1.strikes > 0
+              className={`h-12 md:h-16 rounded-xl flex items-center justify-center font-bebas text-4xl md:text-5xl font-bold transition-all ${team1.strikes > 0
                 ? 'bg-[#93000a] text-[#ffdad6] border-2 border-[#ef4444] shadow-[0_0_20px_rgba(239,68,68,0.7)]'
                 : 'bg-[#0e1320] text-[#303443] border border-[#252a38]'
                 }`}
@@ -324,7 +330,7 @@ export function StageGameboard({ onSwitchToHost }: StageGameboardProps = {}) {
         </div>
 
         {/* CENTER POD: THE TOP 8 SURVEY ANSWERS GAMEBOARD (ENLARGED) */}
-        <div className="lg:col-span-6 bg-[#171b29] border-2 border-[#252a38] rounded-2xl p-4 md:p-6 shadow-2xl flex flex-col justify-between min-h-[580px] md:min-h-[640px]">
+        <div className="lg:col-span-6 bg-[#171b29] border-2 border-[#252a38] rounded-2xl p-4 md:p-6 shadow-2xl flex flex-col justify-between min-h-[480px] md:min-h-[540px]">
           {/* Gameboard Header with Event Branding (Campus Life • Poutpourri) & Live IN PLAY indicator */}
           <div className="flex items-center justify-between pb-3.5 border-b border-[#252a38] flex-wrap gap-3">
             <div className="flex items-center space-x-3.5">
@@ -351,25 +357,7 @@ export function StageGameboard({ onSwitchToHost }: StageGameboardProps = {}) {
               </div>
             </div>
 
-            <div className="flex items-center space-x-2">
-              <div
-                className={`flex items-center space-x-2 px-4 py-1.5 rounded-full border-2 text-xs md:text-sm font-mono-score font-bold tracking-wider uppercase shadow-lg transition-all ${isTeam1Active
-                  ? 'bg-[#00e3fd]/20 border-[#00e3fd] text-[#00e3fd] shadow-[0_0_15px_rgba(0,227,253,0.35)]'
-                  : 'bg-[#ffb800]/20 border-[#ffb800] text-[#ffb800] shadow-[0_0_15px_rgba(255,184,0,0.35)]'
-                  }`}
-              >
-                <span
-                  className={`w-2.5 h-2.5 rounded-full animate-ping ${isTeam1Active ? 'bg-[#00e3fd]' : 'bg-[#ffb800]'
-                    }`}
-                />
-                <span className="text-white font-bebas text-base md:text-lg tracking-widest">
-                  IN PLAY:
-                </span>
-                <span className="font-bold underline decoration-2 underline-offset-2">
-                  {activeTeam.name}
-                </span>
-              </div>
-            </div>
+
           </div>
 
           {/* Current Question Display */}
@@ -390,7 +378,7 @@ export function StageGameboard({ onSwitchToHost }: StageGameboardProps = {}) {
                   return (
                     <div
                       key={`empty-${rankNum}`}
-                      className="h-22 md:h-26 lg:h-30 rounded-2xl bg-[#090e1b]/40 border-2 border-[#252a38]/60 border-dashed flex items-center justify-center select-none opacity-25"
+                      className="h-16 md:h-20 lg:h-24 rounded-2xl bg-[#090e1b]/40 border-2 border-[#252a38]/60 border-dashed flex items-center justify-center select-none opacity-25"
                     >
                       <div className="w-14 h-14 md:w-16 md:h-16 rounded-full bg-[#0e1320] border border-[#252a38] flex items-center justify-center">
                         <span className="font-bebas text-3xl md:text-4xl text-[#303443]">{rankNum}</span>
@@ -401,7 +389,7 @@ export function StageGameboard({ onSwitchToHost }: StageGameboardProps = {}) {
                 return (
                   <div
                     key={answer.id}
-                    className="perspective-1000 select-none cursor-default h-22 md:h-26 lg:h-30"
+                    className="perspective-1000 select-none cursor-default h-16 md:h-20 lg:h-24"
                   >
                     <div className="relative w-full h-full transition-transform duration-500 transform-style-3d">
                       {answer.revealed ? (
@@ -449,7 +437,7 @@ export function StageGameboard({ onSwitchToHost }: StageGameboardProps = {}) {
                   return (
                     <div
                       key={`empty-${rankNum}`}
-                      className="h-22 md:h-26 lg:h-30 rounded-2xl bg-[#090e1b]/40 border-2 border-[#252a38]/60 border-dashed flex items-center justify-center select-none opacity-25"
+                      className="h-16 md:h-20 lg:h-24 rounded-2xl bg-[#090e1b]/40 border-2 border-[#252a38]/60 border-dashed flex items-center justify-center select-none opacity-25"
                     >
                       <div className="w-14 h-14 md:w-16 md:h-16 rounded-full bg-[#0e1320] border border-[#252a38] flex items-center justify-center">
                         <span className="font-bebas text-3xl md:text-4xl text-[#303443]">{rankNum}</span>
@@ -460,7 +448,7 @@ export function StageGameboard({ onSwitchToHost }: StageGameboardProps = {}) {
                 return (
                   <div
                     key={answer.id}
-                    className="perspective-1000 select-none cursor-default h-22 md:h-26 lg:h-30"
+                    className="perspective-1000 select-none cursor-default h-16 md:h-20 lg:h-24"
                   >
                     <div className="relative w-full h-full transition-transform duration-500 transform-style-3d">
                       {answer.revealed ? (
@@ -504,7 +492,7 @@ export function StageGameboard({ onSwitchToHost }: StageGameboardProps = {}) {
 
         {/* RIGHT POD: TEAM 2 */}
         <div
-          className={`lg:col-span-3 rounded-2xl p-4 md:p-6 relative overflow-hidden flex flex-col justify-between min-h-[580px] md:min-h-[640px] transition-all duration-300 ${isTeam2Winner
+          className={`lg:col-span-3 rounded-2xl p-4 md:p-6 relative overflow-hidden flex flex-col justify-between min-h-[480px] md:min-h-[540px] transition-all duration-300 ${isTeam2Winner
             ? 'bg-gradient-to-b from-[#352609] to-[#171b29] border-4 border-[#ffb800] shadow-[0_0_60px_rgba(255,184,0,0.8)] ring-4 ring-[#ffb800]/60'
             : isTeam2Active
               ? 'bg-[#171b29] border-2 border-[#ffb800] shadow-[0_0_35px_rgba(255,184,0,0.35)] ring-2 ring-[#ffb800]/40'
@@ -557,7 +545,7 @@ export function StageGameboard({ onSwitchToHost }: StageGameboardProps = {}) {
           </h2>
 
           {/* Stylized Family Portrait Graphic */}
-          <div className="relative w-full h-36 md:h-44 rounded-xl overflow-hidden bg-[#0e1320] border border-[#252a38] flex items-center justify-center p-3 my-2">
+          <div className="relative w-full h-20 md:h-24 rounded-xl overflow-hidden bg-[#0e1320] border border-[#252a38] flex items-center justify-center p-3 my-2">
             {isTeam2Winner && (
               <div className="absolute top-2 right-2 z-20 w-11 h-11 rounded-full bg-[#ffb800] border-2 border-white flex items-center justify-center shadow-[0_0_25px_#ffb800] animate-bounce">
                 <Trophy className="w-6 h-6 text-black fill-black" />
@@ -575,14 +563,20 @@ export function StageGameboard({ onSwitchToHost }: StageGameboardProps = {}) {
                   </div>
                 ))}
               </div> */}
-              <div className="text-xl font-space text-[#ffdca1] font-semibold text-center">
-                ● CAPTAIN: {team2.captain || 'SARAH'}
-              </div>
+              {team2.members ? (
+                <div className="flex flex-col items-center w-full space-y-0.5 mt-1">
+                  {team2.members.split(',').map((member, i) => (
+                    <span key={i} className="text-base md:text-lg font-space text-[#ffdca1] font-semibold px-2 leading-tight uppercase">
+                      {member.trim()}
+                    </span>
+                  ))}
+                </div>
+              ) : null}
             </div>
           </div>
 
           {/* Score Display */}
-          <div className="text-center py-4 md:py-6 bg-[#0e1320] rounded-xl border border-[#303443] my-2">
+          <div className="text-center py-2 md:py-4 bg-[#0e1320] rounded-xl border border-[#303443] my-2">
             <div className="text-[11px] font-mono-score uppercase text-[#9e8f78] tracking-widest">
               TOTAL MATCH SCORE
             </div>
@@ -599,11 +593,11 @@ export function StageGameboard({ onSwitchToHost }: StageGameboardProps = {}) {
             <div className="flex items-center justify-between text-xs font-mono-score text-[#9e8f78]">
               <span>TEAM STRIKE</span>
               <span className={team2.strikes > 0 ? 'text-[#ef4444] font-bold' : 'text-[#9e8f78]'}>
-                {team2.strikes > 0 ? 'STRIKE INCURRED' : 'CLEAR'}
+                {team2.strikes > 0 ? 'STRIKE INCURRED' : ''}
               </span>
             </div>
             <div
-              className={`h-16 md:h-20 rounded-xl flex items-center justify-center font-bebas text-5xl md:text-6xl font-bold transition-all ${team2.strikes > 0
+              className={`h-12 md:h-16 rounded-xl flex items-center justify-center font-bebas text-4xl md:text-5xl font-bold transition-all ${team2.strikes > 0
                 ? 'bg-[#93000a] text-[#ffdad6] border-2 border-[#ef4444] shadow-[0_0_20px_rgba(239,68,68,0.7)]'
                 : 'bg-[#0e1320] text-[#303443] border border-[#252a38]'
                 }`}

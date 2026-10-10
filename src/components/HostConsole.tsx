@@ -362,7 +362,7 @@ export function HostConsole({ onSwitchToStage }: HostConsoleProps) {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* 1. Final Call - Trigger Winner (2 buttons) */}
           <div className="bg-[#0e1320] p-4 rounded-xl border border-[#303443] space-y-2.5">
             <div className="text-[11px] font-mono-score font-bold uppercase text-[#ffdca1] tracking-wider flex items-center justify-between">
@@ -382,20 +382,28 @@ export function HostConsole({ onSwitchToStage }: HostConsoleProps) {
             <div className="space-y-2">
               <button
                 onClick={() => handleFinalCall(team1.id)}
-                className={`w-full py-2.5 px-3 rounded-lg bg-[#00e3fd] hover:bg-[#9cf0ff] text-black font-bebas text-base md:text-lg tracking-wide flex items-center justify-center space-x-2 shadow-md transition-all active:scale-95 ${gameState.winnerTeamId === team1.id ? 'ring-2 ring-white shadow-[0_0_20px_rgba(0,227,253,0.8)]' : ''
-                  }`}
-                title={`Trigger ${team1.name} as Final Winner on stage`}
+                disabled={team1.score < team2.score}
+                className={`w-full py-2.5 px-3 rounded-lg font-bebas text-base md:text-lg tracking-wide flex items-center justify-center space-x-2 transition-all ${
+                  team1.score >= team2.score 
+                    ? 'bg-[#00e3fd] hover:bg-[#9cf0ff] text-black shadow-md active:scale-95' 
+                    : 'bg-[#00e3fd]/10 text-[#00e3fd]/30 border border-[#00e3fd]/20 cursor-not-allowed'
+                } ${gameState.winnerTeamId === team1.id ? 'ring-2 ring-white shadow-[0_0_20px_rgba(0,227,253,0.8)]' : ''}`}
+                title={team1.score >= team2.score ? `Trigger ${team1.name} as Final Winner on stage` : `Cannot select: ${team1.name} is losing on points`}
               >
-                <Trophy className="w-4 h-4 text-black" />
+                <Trophy className={`w-4 h-4 ${team1.score >= team2.score ? 'text-black' : 'text-[#00e3fd]/30'}`} />
                 <span>FINAL CALL: {team1.name}</span>
               </button>
               <button
                 onClick={() => handleFinalCall(team2.id)}
-                className={`w-full py-2.5 px-3 rounded-lg bg-[#ffb800] hover:bg-[#ffc633] text-black font-bebas text-base md:text-lg tracking-wide flex items-center justify-center space-x-2 shadow-md transition-all active:scale-95 ${gameState.winnerTeamId === team2.id ? 'ring-2 ring-white shadow-[0_0_20px_rgba(255,184,0,0.8)]' : ''
-                  }`}
-                title={`Trigger ${team2.name} as Final Winner on stage`}
+                disabled={team2.score < team1.score}
+                className={`w-full py-2.5 px-3 rounded-lg font-bebas text-base md:text-lg tracking-wide flex items-center justify-center space-x-2 transition-all ${
+                  team2.score >= team1.score 
+                    ? 'bg-[#ffb800] hover:bg-[#ffc633] text-black shadow-md active:scale-95' 
+                    : 'bg-[#ffb800]/10 text-[#ffb800]/30 border border-[#ffb800]/20 cursor-not-allowed'
+                } ${gameState.winnerTeamId === team2.id ? 'ring-2 ring-white shadow-[0_0_20px_rgba(255,184,0,0.8)]' : ''}`}
+                title={team2.score >= team1.score ? `Trigger ${team2.name} as Final Winner on stage` : `Cannot select: ${team2.name} is losing on points`}
               >
-                <Trophy className="w-4 h-4 text-black" />
+                <Trophy className={`w-4 h-4 ${team2.score >= team1.score ? 'text-black' : 'text-[#ffb800]/30'}`} />
                 <span>FINAL CALL: {team2.name}</span>
               </button>
             </div>
@@ -467,29 +475,7 @@ export function HostConsole({ onSwitchToStage }: HostConsoleProps) {
             </div>
           </div>
 
-          {/* 3. Correct and Wrong (2 buttons) */}
-          <div className="bg-[#0e1320] p-4 rounded-xl border border-[#303443] space-y-2.5">
-            <div className="text-[11px] font-mono-score font-bold uppercase text-[#ffdca1] tracking-wider flex items-center space-x-1.5">
-              <Volume2 className="w-3.5 h-3.5 text-[#ffb800]" />
-              <span>SFX TRIGGERS</span>
-            </div>
-            <div className="space-y-2">
-              <button
-                onClick={() => playSfxDirect('ding')}
-                className="w-full py-2.5 px-3 rounded-lg bg-[#00e3fd]/20 hover:bg-[#00e3fd]/35 text-[#00e3fd] font-bebas text-base tracking-wide flex items-center justify-center space-x-2 border border-[#00e3fd]/50 shadow-md transition-all active:scale-95"
-              >
-                <CheckCircle2 className="w-4 h-4 text-[#00e3fd]" />
-                <span>CORRECT (DING)</span>
-              </button>
-              <button
-                onClick={() => playSfxDirect('buzz')}
-                className="w-full py-2.5 px-3 rounded-lg bg-[#93000a]/30 hover:bg-[#93000a]/60 text-[#ffb4ab] font-bebas text-base tracking-wide flex items-center justify-center space-x-2 border border-[#ef4444]/50 shadow-md transition-all active:scale-95"
-              >
-                <XCircle className="w-4 h-4 text-[#ef4444]" />
-                <span>WRONG (BUZZ & SCREEN X)</span>
-              </button>
-            </div>
-          </div>
+
         </div>
       </section>
 

@@ -240,9 +240,15 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
   // Action helpers
   const setRound = (round: RoundType) => dispatchAction({ type: 'SET_ROUND', round });
   const setActiveTeam = (teamId: string) => dispatchAction({ type: 'SET_ACTIVE_TEAM', teamId });
-  const revealAnswer = (answerId: string) => dispatchAction({ type: 'REVEAL_ANSWER', answerId });
+  const revealAnswer = (answerId: string) => {
+    dispatchAction({ type: 'PLAY_SFX', sound: 'ding' });
+    dispatchAction({ type: 'REVEAL_ANSWER', answerId });
+  };
   const hideAnswer = (answerId: string) => dispatchAction({ type: 'HIDE_ANSWER', answerId });
-  const revealAllAnswers = () => dispatchAction({ type: 'REVEAL_ALL_ANSWERS' });
+  const revealAllAnswers = () => {
+    dispatchAction({ type: 'PLAY_SFX', sound: 'ding' });
+    dispatchAction({ type: 'REVEAL_ALL_ANSWERS' });
+  };
   const hideAllAnswers = () => dispatchAction({ type: 'HIDE_ALL_ANSWERS' });
   const awardPotToTeam = (teamId: string) => dispatchAction({ type: 'AWARD_POT_TO_TEAM', teamId });
   const triggerFinalCall = (teamId: string) => {
@@ -269,7 +275,10 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
     dispatchAction({ type: 'SET_TEAM_SCORE', teamId, score });
   const updateTeamInfo = (teamId: string, info: { name?: string; captain?: string; members?: string }) =>
     dispatchAction({ type: 'UPDATE_TEAM_INFO', teamId, ...info });
-  const addStrike = (teamId: string) => dispatchAction({ type: 'ADD_STRIKE', teamId });
+  const addStrike = (teamId: string) => {
+    dispatchAction({ type: 'PLAY_SFX', sound: 'buzz' });
+    dispatchAction({ type: 'ADD_STRIKE', teamId });
+  };
   const clearStrikes = (teamId: string) => dispatchAction({ type: 'CLEAR_STRIKES', teamId });
   const nextRound = () => dispatchAction({ type: 'NEXT_ROUND' });
   const resetRound = () => dispatchAction({ type: 'RESET_ROUND' });

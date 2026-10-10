@@ -27,6 +27,37 @@ interface HostConsoleProps {
   onSwitchToStage?: () => void;
 }
 
+function DebouncedInput({ value, onChange, className, type = "text", placeholder = "" }: { value: string | number, onChange: (val: string) => void, className?: string, type?: string, placeholder?: string }) {
+  const [localVal, setLocalVal] = React.useState(value);
+  const [isFocused, setIsFocused] = React.useState(false);
+
+  React.useEffect(() => {
+    if (!isFocused) setLocalVal(value);
+  }, [value, isFocused]);
+
+  const handleBlur = () => {
+    setIsFocused(false);
+    if (localVal !== value) onChange(localVal.toString());
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') e.currentTarget.blur();
+  };
+
+  return (
+    <input
+      type={type}
+      value={localVal}
+      onChange={(e) => setLocalVal(e.target.value)}
+      onFocus={() => setIsFocused(true)}
+      onBlur={handleBlur}
+      onKeyDown={handleKeyDown}
+      className={className}
+      placeholder={placeholder}
+    />
+  );
+}
+
 export function HostConsole({ onSwitchToStage }: HostConsoleProps) {
   const {
     gameState,
@@ -201,10 +232,10 @@ export function HostConsole({ onSwitchToStage }: HostConsoleProps) {
                   </button>
                 </div>
                 <div className="flex items-center bg-[#0e1320] border border-[#303443] rounded overflow-hidden">
-                  <input
+                  <DebouncedInput
                     type="number"
                     value={team1.score}
-                    onChange={(e) => setTeamScore(team1.id, parseInt(e.target.value) || 0)}
+                    onChange={(val) => setTeamScore(team1.id, parseInt(val) || 0)}
                     className="w-full bg-transparent px-2 py-1.5 font-mono-score font-bold text-sm text-[#00e3fd] text-center focus:outline-none"
                   />
                   {/* Reset points button */}
@@ -237,11 +268,11 @@ export function HostConsole({ onSwitchToStage }: HostConsoleProps) {
               <label className="block text-[10px] uppercase font-bold text-[#9e8f78] mb-1">
                 MEMBERS (OPTIONAL)
               </label>
-              <input
+              <DebouncedInput
                 type="text"
                 placeholder="e.g. Alice, Bob, Charlie"
                 value={team1.members || ''}
-                onChange={(e) => updateTeamInfo(team1.id, { members: e.target.value })}
+                onChange={(val) => updateTeamInfo(team1.id, { members: val })}
                 className="w-full bg-[#0e1320] border border-[#303443] rounded px-3 py-1 text-xs text-[#d5c4ab] focus:outline-none focus:border-[#00e3fd]"
               />
             </div>
@@ -280,10 +311,10 @@ export function HostConsole({ onSwitchToStage }: HostConsoleProps) {
                 <label className="block text-[10px] uppercase font-bold text-[#9e8f78] mb-1">
                   TEAM NAME
                 </label>
-                <input
+                <DebouncedInput
                   type="text"
                   value={team2.name}
-                  onChange={(e) => updateTeamInfo(team2.id, { name: e.target.value })}
+                  onChange={(val) => updateTeamInfo(team2.id, { name: val })}
                   className="w-full bg-[#0e1320] border border-[#303443] rounded px-3 py-1.5 font-bold text-sm text-[#dee2f5] focus:outline-none focus:border-[#ffb800]"
                 />
               </div>
@@ -302,10 +333,10 @@ export function HostConsole({ onSwitchToStage }: HostConsoleProps) {
                   </button>
                 </div>
                 <div className="flex items-center bg-[#0e1320] border border-[#303443] rounded overflow-hidden">
-                  <input
+                  <DebouncedInput
                     type="number"
                     value={team2.score}
-                    onChange={(e) => setTeamScore(team2.id, parseInt(e.target.value) || 0)}
+                    onChange={(val) => setTeamScore(team2.id, parseInt(val) || 0)}
                     className="w-full bg-transparent px-2 py-1.5 font-mono-score font-bold text-sm text-[#ffb0b3] text-center focus:outline-none"
                   />
                   {/* Reset points button */}
@@ -338,11 +369,11 @@ export function HostConsole({ onSwitchToStage }: HostConsoleProps) {
               <label className="block text-[10px] uppercase font-bold text-[#9e8f78] mb-1">
                 MEMBERS (OPTIONAL)
               </label>
-              <input
+              <DebouncedInput
                 type="text"
                 placeholder="e.g. Alice, Bob, Charlie"
                 value={team2.members || ''}
-                onChange={(e) => updateTeamInfo(team2.id, { members: e.target.value })}
+                onChange={(val) => updateTeamInfo(team2.id, { members: val })}
                 className="w-full bg-[#0e1320] border border-[#303443] rounded px-3 py-1 text-xs text-[#d5c4ab] focus:outline-none focus:border-[#ffb800]"
               />
             </div>

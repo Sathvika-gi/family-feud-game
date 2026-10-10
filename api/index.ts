@@ -2,8 +2,8 @@ import express from 'express';
 import Redis from 'ioredis';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { GameState, GameAction, RoundType } from './src/types/game';
-import { DEFAULT_QUESTIONS, DEFAULT_FAST_MONEY } from './src/data/defaultSurveys';
+import { GameState, GameAction, RoundType } from '../src/types/game';
+import { DEFAULT_QUESTIONS, DEFAULT_FAST_MONEY } from '../src/data/defaultSurveys';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

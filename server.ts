@@ -1,6 +1,5 @@
 import express from 'express';
-import { createServer } from 'http';
-import { WebSocketServer, WebSocket } from 'ws';
+import Redis from 'ioredis';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { GameState, GameAction, RoundType } from './src/types/game';
@@ -12,14 +11,9 @@ const __dirname = path.dirname(__filename);
 const app = express();
 app.use(express.json());
 
-const server = createServer(app);
-const wss = new WebSocketServer({ server, path: '/ws' });
+const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
+export const redis = new Redis(redisUrl);
 
-// In-Memory Game Store
-const games = new Map<string, GameState>();
-
-// WebSocket connection room mapping: ws -> { gameId: string, role: string }
-const clients = new Map<WebSocket, { gameId: string; role: string }>();
 
 function createInitialGameState(gameId: string): GameState {
   return {
@@ -56,15 +50,19 @@ function createInitialGameState(gameId: string): GameState {
   };
 }
 
-// Pre-populate default room
-games.set('FF-90210', createInitialGameState('FF-90210'));
+// Pre-populate default room pattern removed for dynamic setup
 
-function getOrCreateGame(gameId: string): GameState {
+async function getOrCreateGame(gameId: string): Promise<GameState> {
   const normalizedId = (gameId || 'FF-90210').toUpperCase().trim();
-  if (!games.has(normalizedId)) {
-    games.set(normalizedId, createInitialGameState(normalizedId));
+  const data = await redis.get(`game:${normalizedId}`);
+  if (data) {
+    try {
+      return JSON.parse(data);
+    } catch(e) {}
   }
-  return games.get(normalizedId)!;
+  const newState = createInitialGameState(normalizedId);
+  await redis.set(`game:${normalizedId}`, JSON.stringify(newState));
+  return newState;
 }
 
 function calculateCurrentRoundPot(game: GameState): number {
@@ -278,91 +276,52 @@ function applyGameAction(game: GameState, action: GameAction): GameState {
   return game;
 }
 
-function broadcastToGame(gameId: string, payload: unknown) {
-  const json = JSON.stringify(payload);
-  for (const [ws, info] of clients.entries()) {
-    if (info.gameId === gameId && ws.readyState === WebSocket.OPEN) {
-      try {
-        ws.send(json);
-      } catch (err) {
-        console.error('Error broadcasting to client', err);
-      }
-    }
-  }
-}
-
-// WebSocket connection handling
-wss.on('connection', (ws) => {
-  ws.on('message', (messageRaw) => {
-    try {
-      const data = JSON.parse(messageRaw.toString());
-      if (data.type === 'join') {
-        const gameId = (data.gameId || 'FF-90210').toUpperCase().trim();
-        const role = data.role || 'viewer';
-        clients.set(ws, { gameId, role });
-        const game = getOrCreateGame(gameId);
-        ws.send(JSON.stringify({ type: 'sync', state: game }));
-      } else if (data.type === 'action') {
-        const gameId = (data.gameId || 'FF-90210').toUpperCase().trim();
-        const game = getOrCreateGame(gameId);
-        const updated = applyGameAction(game, data.action as GameAction);
-        broadcastToGame(gameId, { type: 'sync', state: updated, action: data.action });
-      } else if (data.type === 'ping') {
-        ws.send(JSON.stringify({ type: 'pong', timestamp: Date.now() }));
-      }
-    } catch (err) {
-      console.error('Error handling WebSocket message', err);
-    }
-  });
-
-  ws.on('close', () => {
-    clients.delete(ws);
-  });
-});
-
 // REST API Endpoints
-app.get('/api/games/:gameId', (req, res) => {
-  const game = getOrCreateGame(req.params.gameId);
+app.get('/api/games/:gameId', async (req, res) => {
+  const game = await getOrCreateGame(req.params.gameId);
   res.json({ state: game });
 });
 
-app.post('/api/games/:gameId/action', (req, res) => {
+app.post('/api/games/:gameId/action', async (req, res) => {
   const gameId = req.params.gameId.toUpperCase().trim();
-  const game = getOrCreateGame(gameId);
+  const game = await getOrCreateGame(gameId);
   const action = req.body as GameAction;
   const updated = applyGameAction(game, action);
-  broadcastToGame(gameId, { type: 'sync', state: updated, action });
+  await redis.set(`game:${gameId}`, JSON.stringify(updated));
   res.json({ state: updated });
 });
 
-app.post('/api/games', (req, res) => {
+app.post('/api/games', async (req, res) => {
   const gameId = req.body?.gameId || `FF-${Math.floor(10000 + Math.random() * 90000)}`;
   const normalized = gameId.toUpperCase().trim();
   const game = createInitialGameState(normalized);
-  games.set(normalized, game);
+  await redis.set(`game:${normalized}`, JSON.stringify(game));
   res.json({ gameId: normalized, state: game });
 });
 
-// Vite Middleware for development
-async function startServer() {
-  if (process.env.NODE_ENV !== 'production') {
-    const { createServer: createViteServer } = await import('vite');
-    const vite = await createViteServer({
-      server: { middlewareMode: true },
-      appType: 'spa',
-    });
-    app.use(vite.middlewares);
-  } else {
-    app.use(express.static(path.join(__dirname, 'dist')));
-    app.get('*', (_req, res) => {
-      res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+// Setup dev server OR export for Vercel
+if (!process.env.VERCEL) {
+  async function startServer() {
+    if (process.env.NODE_ENV !== 'production') {
+      const { createServer: createViteServer } = await import('vite');
+      const vite = await createViteServer({
+        server: { middlewareMode: true },
+        appType: 'spa',
+      });
+      app.use(vite.middlewares);
+    } else {
+      app.use(express.static(path.join(__dirname, 'dist')));
+      app.get('*', (_req, res) => {
+        res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+      });
+    }
+
+    const PORT = process.env.PORT || 3000;
+    app.listen(PORT, () => {
+      console.log(`> Studio Primetime Game Server running at http://localhost:${PORT}`);
     });
   }
-
-  const PORT = process.env.PORT || 3000;
-  server.listen(PORT, () => {
-    console.log(`> Studio Primetime Game Server running at http://localhost:${PORT}`);
-  });
+  startServer();
 }
 
-startServer();
+export default app;

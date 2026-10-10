@@ -91,10 +91,7 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
 
   const [gameState, setGameState] = useState<GameState>(initialFallbackState);
   const [isConnected, setIsConnected] = useState<boolean>(false);
-  const [latency, setLatency] = useState<number>(12);
-  const wsRef = useRef<WebSocket | null>(null);
-  const pingIntervalRef = useRef<number | null>(null);
-  const pingStartRef = useRef<number>(0);
+  const [latency, setLatency] = useState<number>(0);
   const lastProcessedSfxIdRef = useRef<string>('');
 
   const setGameId = (newId: string) => {
@@ -108,113 +105,62 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  // Connect WebSocket
+  // Poll state from REST API
   useEffect(() => {
     let isMounted = true;
-    let reconnectTimeout: number;
+    let pollInterval: number;
 
-    function connect() {
-      try {
-        const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-        const wsUrl = `${protocol}//${window.location.host}/ws`;
-        const ws = new WebSocket(wsUrl);
-        wsRef.current = ws;
-
-        ws.onopen = () => {
+    const fetchState = () => {
+      const start = Date.now();
+      fetch(`/api/games/${gameId}`)
+        .then((res) => res.json())
+        .then((data) => {
           if (!isMounted) return;
           setIsConnected(true);
-          ws.send(JSON.stringify({ type: 'join', gameId, role: 'client' }));
-
-          // Start ping intervals for latency tracking
-          if (pingIntervalRef.current) clearInterval(pingIntervalRef.current);
-          pingIntervalRef.current = window.setInterval(() => {
-            if (ws.readyState === WebSocket.OPEN) {
-              pingStartRef.current = Date.now();
-              ws.send(JSON.stringify({ type: 'ping' }));
+          setLatency(Math.max(2, Date.now() - start));
+          if (data?.state) {
+            setGameState(data.state);
+            if (data.state.lastSfx && data.state.lastSfx.id !== lastProcessedSfxIdRef.current) {
+              lastProcessedSfxIdRef.current = data.state.lastSfx.id;
+              playSfx(data.state.lastSfx.sound);
             }
-          }, 4000);
-        };
-
-        ws.onmessage = (event) => {
-          if (!isMounted) return;
-          try {
-            const data = JSON.parse(event.data);
-            if (data.type === 'sync' && data.state) {
-              setGameState(data.state);
-              // Handle sound effects from server
-              if (data.state.lastSfx && data.state.lastSfx.id !== lastProcessedSfxIdRef.current) {
-                lastProcessedSfxIdRef.current = data.state.lastSfx.id;
-                playSfx(data.state.lastSfx.sound);
-              }
-            } else if (data.type === 'pong') {
-              const rtt = Math.max(4, Date.now() - pingStartRef.current);
-              setLatency(rtt);
-            }
-          } catch (e) {
-            console.error('Failed to parse WS message', e);
           }
-        };
-
-        ws.onclose = () => {
+        })
+        .catch((err) => {
           if (!isMounted) return;
+          console.error('Fetch state error:', err);
           setIsConnected(false);
-          if (pingIntervalRef.current) clearInterval(pingIntervalRef.current);
-          reconnectTimeout = window.setTimeout(connect, 2000);
-        };
+        });
+    };
 
-        ws.onerror = () => {
-          if (!isMounted) return;
-          setIsConnected(false);
-        };
-      } catch (err) {
-        console.error('WebSocket connection error:', err);
-        reconnectTimeout = window.setTimeout(connect, 2000);
-      }
-    }
-
-    connect();
-
-    // Fallback: Initial state fetch via REST API
-    fetch(`/api/games/${gameId}`)
-      .then((res) => res.json())
-      .then((data) => {
-        if (data?.state && isMounted) {
-          setGameState(data.state);
-        }
-      })
-      .catch((err) => console.warn('REST fetch initial state error:', err));
+    fetchState();
+    pollInterval = window.setInterval(fetchState, 1000);
 
     return () => {
       isMounted = false;
-      if (reconnectTimeout) clearTimeout(reconnectTimeout);
-      if (pingIntervalRef.current) clearInterval(pingIntervalRef.current);
-      if (wsRef.current) {
-        wsRef.current.close();
-      }
+      if (pollInterval) clearInterval(pollInterval);
     };
   }, [gameId]);
 
-  // Dispatch Action to server (WebSocket + fallback HTTP)
+  // Dispatch Action to server (HTTP POST)
   const dispatchAction = useCallback(
     (action: GameAction) => {
-      // Send through WebSocket if open
-      if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
-        wsRef.current.send(JSON.stringify({ type: 'action', gameId, action }));
-      } else {
-        // Fallback HTTP POST
-        fetch(`/api/games/${gameId}/action`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(action),
-        })
-          .then((res) => res.json())
-          .then((data) => {
-            if (data?.state) {
-              setGameState(data.state);
+      fetch(`/api/games/${gameId}/action`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(action),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data?.state) {
+            setGameState(data.state);
+            if (data.state.lastSfx && data.state.lastSfx.id !== lastProcessedSfxIdRef.current) {
+              lastProcessedSfxIdRef.current = data.state.lastSfx.id;
+              playSfx(data.state.lastSfx.sound);
             }
-          })
-          .catch((err) => console.error('Failed to send action via HTTP', err));
-      }
+          }
+        })
+        .catch((err) => console.error('Failed to send action HTTP', err));
     },
     [gameId]
   );

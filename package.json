@@ -4,12 +4,13 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "tsx server.ts",
-    "start": "node server.ts",
-    "build": "vite build",
-    "preview": "vite preview",
-    "clean": "rm -rf dist server.js",
-    "lint": "tsc --noEmit"
+    "dev": "node run-dev.js",
+    "dev:frontend": "npx vite frontend",
+    "dev:backend": "npx tsx watch backend/src/server.ts",
+    "build:frontend": "npx vite build frontend",
+    "build:backend": "npx tsc -p backend/tsconfig.json",
+    "build": "npx vite build frontend",
+    "start": "npx tsx backend/src/server.ts"
   },
   "dependencies": {
     "@google/genai": "^2.4.0",

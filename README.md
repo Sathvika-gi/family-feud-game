@@ -62,33 +62,57 @@ npm run dev
 
 ---
 
-## 🌐 Deployment Guide
-
-### 1. Deploy Backend to Railway
-
-1. Go to [railway.app](https://railway.app/) and create a new project.
-2. Select **Deploy from GitHub repo** and choose this repository.
-3. In the Railway dashboard:
-   - Go to **Settings** -> **Root Directory** -> Set to `backend`.
-4. Railway will automatically detect `backend/package.json` and `backend/Procfile`.
-5. Go to **Settings** -> **Networking** -> **Generate Domain** to get your public backend URL (e.g. `https://family-feud-backend-production.up.railway.app`).
-6. (Optional) In **Variables**, add:
-   - `CORS_ORIGIN=*` (or your Vercel frontend domain)
+## 🌐 Deployment Guide: Vercel (Frontend) + Azure (Backend)
 
 ---
 
-### 2. Deploy Frontend to Vercel
+### Step 1: Deploy Backend to Microsoft Azure
 
-1. Go to [vercel.com](https://vercel.com/) and click **Add New** -> **Project**.
+You can host the backend on **Azure App Service** or **Azure Container Apps**:
+
+#### Method A: Azure App Service (Recommended for standard Node.js deployment)
+1. Go to the [Azure Portal](https://portal.azure.com/) and create a **Web App** (Linux, Node 20 LTS).
+2. Set the deployment source to **GitHub** and connect this repository:
+   - If using GitHub Actions, configure the deployment working directory to `backend`.
+3. ⚠️ **CRITICAL AZURE WEBSOCKET SETTING**:
+   - In Azure Portal, navigate to your App Service:
+   - Go to **Configuration** (or **Configuration** → **General settings**).
+   - Find **Web sockets** and switch it to **ON**.
+   - Click **Save**.
+4. In **Application settings** (Environment variables):
+   - Add `PORT` = `8080` (or leave default, the app automatically reads `process.env.PORT`).
+   - Add `CORS_ORIGIN` = `*` (or your Vercel frontend domain).
+5. In **Configuration** → **General settings** → **Startup Command**:
+   - Set: `npm start`
+6. Note your Azure URL: `https://<your-app-name>.azurewebsites.net`.
+   - Your WebSocket URL is: `wss://<your-app-name>.azurewebsites.net/ws`.
+   - Test health check: `https://<your-app-name>.azurewebsites.net/health`.
+
+#### Method B: Azure Container Apps (Docker-based)
+1. The `backend/Dockerfile` is pre-configured.
+2. In Azure Portal, search for **Container Apps** → **Create**.
+3. Point to this repository's `backend` folder or build the container image.
+4. Set Target Port: `3001` (or `8080`).
+5. Enable Ingress: **Accept traffic from anywhere** (External).
+6. Note your Container App URL: `https://<your-app>.<region>.azurecontainerapps.io`.
+
+---
+
+### Step 2: Deploy Frontend to Vercel
+
+1. Go to [vercel.com](https://vercel.com/) and click **Add New** → **Project**.
 2. Import this GitHub repository.
 3. In the **Configure Project** screen:
-   - **Root Directory**: Click "Edit" and select `frontend`.
+   - **Root Directory**: Click "Edit" and choose:
+     ```
+     frontend
+     ```
    - **Framework Preset**: Vite (detected automatically).
    - **Build Command**: `npm run build`
    - **Output Directory**: `dist`
-4. Expand **Environment Variables** and add:
-   - `VITE_BACKEND_URL`: Your Railway backend domain (e.g. `https://your-backend.up.railway.app`)
-   - `VITE_WS_URL`: Your Railway WebSocket URL (e.g. `wss://your-backend.up.railway.app/ws`)
+4. Expand **Environment Variables** and add your Azure backend URLs:
+   - `VITE_BACKEND_URL`: `https://<your-azure-app>.azurewebsites.net`
+   - `VITE_WS_URL`: `wss://<your-azure-app>.azurewebsites.net/ws`
 5. Click **Deploy**.
 
-Vercel will build and host the frontend, automatically connecting to your live Railway backend.
+Vercel will build and host the frontend, automatically connecting to your live Azure backend.

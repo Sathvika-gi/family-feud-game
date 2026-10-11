@@ -364,8 +364,8 @@ app.post('/api/games', (req, res) => {
 // Port configuration for Railway / local hosting
 const PORT = Number(process.env.PORT || 3001);
 
-server.listen(PORT, () => {
+server.listen(PORT, '0.0.0.0', () => {
   console.log(`> Family Feud Backend Server running on port ${PORT}`);
-  console.log(`> Healthcheck: http://localhost:${PORT}/health`);
-  console.log(`> WebSocket: ws://localhost:${PORT}/ws`);
+  console.log(`> Healthcheck: http://0.0.0.0:${PORT}/health`);
+  console.log(`> WebSocket: ws://0.0.0.0:${PORT}/ws`);
 });

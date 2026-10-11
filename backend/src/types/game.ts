@@ -67,7 +67,8 @@ export type GameState = {
 };
 
 export type GameAction =
-  | { type: 'SET_ACTIVE_TEAM'; teamId: string }
+  | { type: 'SET_ACTIVE_TEAM'; teamId: string | null }
+  | { type: 'CLEAR_ACTIVE_TEAM' }
   | { type: 'SET_ROUND'; round: RoundType }
   | { type: 'REVEAL_ANSWER'; answerId: string }
   | { type: 'HIDE_ANSWER'; answerId: string }

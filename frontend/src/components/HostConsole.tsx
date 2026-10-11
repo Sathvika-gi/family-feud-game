@@ -36,6 +36,7 @@ export function HostConsole({ onSwitchToStage, onLogout }: HostConsoleProps) {
     revealedCount,
     totalAnswersCount,
     setActiveTeam,
+    clearActiveTeam,
     revealAnswer,
     hideAnswer,
     revealAllAnswers,
@@ -131,7 +132,7 @@ export function HostConsole({ onSwitchToStage, onLogout }: HostConsoleProps) {
 
       {/* SECTION 1: TEAM SETUP & TURN SELECTION */}
       <section className="bg-[#171b29] border border-[#252a38] rounded-xl p-5 shadow-lg">
-        <div className="flex items-center justify-between mb-4 pb-3 border-b border-[#252a38]">
+        <div className="flex flex-wrap items-center justify-between gap-3 mb-4 pb-3 border-b border-[#252a38]">
           <div className="flex items-center space-x-2">
             <span className="font-bebas text-lg text-[#ffdca1] tracking-wider">
               1. TEAM SETUP & TURN SELECTION
@@ -141,6 +142,23 @@ export function HostConsole({ onSwitchToStage, onLogout }: HostConsoleProps) {
             </span>
           </div>
 
+          {/* Active Control Reset Button */}
+          <div className="flex items-center space-x-2">
+            {gameState.currentTeamId ? (
+              <button
+                onClick={clearActiveTeam}
+                className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-[#93000a]/30 hover:bg-[#93000a] text-[#ffdad6] border border-[#ef4444]/60 hover:border-[#ef4444] text-xs font-mono-score font-bold uppercase tracking-wider transition-all shadow-md active:scale-95 cursor-pointer"
+                title="Reset active board control to neutral (neither team active)"
+              >
+                <RotateCcw className="w-3.5 h-3.5 text-[#ffdad6]" />
+                <span>RESET ACTIVE CONTROL</span>
+              </button>
+            ) : (
+              <span className="text-[11px] font-mono-score text-[#9e8f78] uppercase px-2.5 py-1 rounded bg-[#0e1320] border border-[#252a38]">
+                TURN: NEUTRAL (NONE ACTIVE)
+              </span>
+            )}
+          </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
@@ -159,8 +177,17 @@ export function HostConsole({ onSwitchToStage, onLogout }: HostConsoleProps) {
                 </span>
               </div>
               {gameState.currentTeamId === team1.id ? (
-                <div className="px-2.5 py-0.5 rounded bg-[#00e3fd] text-black font-bold text-xs uppercase tracking-wider">
-                  ACTIVE TURN / IN CONTROL
+                <div className="flex items-center space-x-1.5">
+                  <div className="px-2.5 py-0.5 rounded bg-[#00e3fd] text-black font-bold text-xs uppercase tracking-wider">
+                    ACTIVE TURN / IN CONTROL
+                  </div>
+                  <button
+                    onClick={clearActiveTeam}
+                    className="p-1 rounded bg-[#252a38] hover:bg-[#93000a]/50 text-[#dee2f5] hover:text-[#ffdad6] border border-[#514532] hover:border-[#ef4444]/60 transition-all cursor-pointer"
+                    title="Release active control"
+                  >
+                    <RotateCcw className="w-3 h-3 text-[#ffb800]" />
+                  </button>
                 </div>
               ) : (
                 <button
@@ -260,8 +287,17 @@ export function HostConsole({ onSwitchToStage, onLogout }: HostConsoleProps) {
                 </span>
               </div>
               {gameState.currentTeamId === team2.id ? (
-                <div className="px-2.5 py-0.5 rounded bg-[#ffb800] text-black font-bold text-xs uppercase tracking-wider">
-                  ACTIVE TURN / IN CONTROL
+                <div className="flex items-center space-x-1.5">
+                  <div className="px-2.5 py-0.5 rounded bg-[#ffb800] text-black font-bold text-xs uppercase tracking-wider">
+                    ACTIVE TURN / IN CONTROL
+                  </div>
+                  <button
+                    onClick={clearActiveTeam}
+                    className="p-1 rounded bg-[#252a38] hover:bg-[#93000a]/50 text-[#dee2f5] hover:text-[#ffdad6] border border-[#514532] hover:border-[#ef4444]/60 transition-all cursor-pointer"
+                    title="Release active control"
+                  >
+                    <RotateCcw className="w-3 h-3 text-[#ffb800]" />
+                  </button>
                 </div>
               ) : (
                 <button

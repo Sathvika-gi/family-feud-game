@@ -91,6 +91,10 @@ function applyGameAction(game: GameState, action: GameAction): GameState {
       game.currentTeamId = action.teamId;
       break;
     }
+    case 'CLEAR_ACTIVE_TEAM': {
+      game.currentTeamId = null;
+      break;
+    }
     case 'SET_ROUND': {
       game.currentRound = action.round;
       if (action.round === 'r1') game.roundMultiplier = 1;

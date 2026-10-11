@@ -16,7 +16,8 @@ type GameContextType = {
   dispatchAction: (action: GameAction) => void;
   // Convenience helpers
   setRound: (round: RoundType) => void;
-  setActiveTeam: (teamId: string) => void;
+  setActiveTeam: (teamId: string | null) => void;
+  clearActiveTeam: () => void;
   revealAnswer: (answerId: string) => void;
   hideAnswer: (answerId: string) => void;
   revealAllAnswers: () => void;
@@ -270,7 +271,8 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
 
   // Action helpers
   const setRound = (round: RoundType) => dispatchAction({ type: 'SET_ROUND', round });
-  const setActiveTeam = (teamId: string) => dispatchAction({ type: 'SET_ACTIVE_TEAM', teamId });
+  const setActiveTeam = (teamId: string | null) => dispatchAction({ type: 'SET_ACTIVE_TEAM', teamId });
+  const clearActiveTeam = () => dispatchAction({ type: 'CLEAR_ACTIVE_TEAM' });
   const revealAnswer = (answerId: string) => {
     dispatchAction({ type: 'PLAY_SFX', sound: 'ding' });
     dispatchAction({ type: 'REVEAL_ANSWER', answerId });
@@ -342,6 +344,7 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
         dispatchAction,
         setRound,
         setActiveTeam,
+        clearActiveTeam,
         revealAnswer,
         hideAnswer,
         revealAllAnswers,

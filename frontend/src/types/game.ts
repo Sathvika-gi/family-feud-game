@@ -58,6 +58,7 @@ export type GameState = {
   fastMoney: FastMoneyState;
   updatedAt: number;
   winnerTeamId?: string | null;
+  showQuestionOnStage?: boolean;
   lastSfx?: {
     id: string;
     sound: 'ding' | 'buzz' | 'strike3' | 'bell' | 'fanfare';
@@ -89,4 +90,6 @@ export type GameAction =
   | { type: 'UPDATE_ANSWER'; answerId: string; text?: string; points?: number }
   | { type: 'PLAY_SFX'; sound: 'ding' | 'buzz' | 'strike3' | 'bell' | 'fanfare' }
   | { type: 'UPDATE_FAST_MONEY'; payload: Partial<FastMoneyState> }
-  | { type: 'UPDATE_FAST_MONEY_ANSWER'; questionId: string; player: 1 | 2; answer: string; points: number };
+  | { type: 'UPDATE_FAST_MONEY_ANSWER'; questionId: string; player: 1 | 2; answer: string; points: number }
+  | { type: 'TOGGLE_QUESTION_VISIBILITY' }
+  | { type: 'SET_QUESTION_VISIBILITY'; visible: boolean };

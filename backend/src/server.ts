@@ -39,7 +39,7 @@ function createInitialGameState(gameId: string): GameState {
     teams: [
       {
         id: 'team-1',
-        name: 'THE JOHNSONS',
+        name: 'TEAM A',
         score: 0,
         captain: 'Marcus',
         members: '',
@@ -48,7 +48,7 @@ function createInitialGameState(gameId: string): GameState {
       },
       {
         id: 'team-2',
-        name: 'THE MILLERS',
+        name: 'TEAM B',
         score: 0,
         captain: 'Sarah',
         members: '',
@@ -58,6 +58,7 @@ function createInitialGameState(gameId: string): GameState {
     ],
     questions: JSON.parse(JSON.stringify(DEFAULT_QUESTIONS)),
     fastMoney: JSON.parse(JSON.stringify(DEFAULT_FAST_MONEY)),
+    showQuestionOnStage: false,
     updatedAt: Date.now(),
   };
 }
@@ -216,6 +217,7 @@ function applyGameAction(game: GameState, action: GameAction): GameState {
       game.currentTeamId = null;
       game.teams[0].strikes = 0;
       game.teams[1].strikes = 0;
+      game.showQuestionOnStage = false;
       break;
     }
     case 'RESET_ROUND': {
@@ -242,6 +244,7 @@ function applyGameAction(game: GameState, action: GameAction): GameState {
       }
       game.teams[0].strikes = 0;
       game.teams[1].strikes = 0;
+      game.showQuestionOnStage = false;
       break;
     }
     case 'UPDATE_QUESTION_TEXT': {
@@ -266,6 +269,14 @@ function applyGameAction(game: GameState, action: GameAction): GameState {
     }
     case 'UPDATE_FAST_MONEY': {
       Object.assign(game.fastMoney, action.payload);
+      break;
+    }
+    case 'TOGGLE_QUESTION_VISIBILITY': {
+      game.showQuestionOnStage = !game.showQuestionOnStage;
+      break;
+    }
+    case 'SET_QUESTION_VISIBILITY': {
+      game.showQuestionOnStage = action.visible;
       break;
     }
     case 'UPDATE_FAST_MONEY_ANSWER': {

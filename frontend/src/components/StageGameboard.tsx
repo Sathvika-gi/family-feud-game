@@ -360,12 +360,22 @@ export function StageGameboard({ onSwitchToHost }: StageGameboardProps = {}) {
 
           </div>
 
-          {/* Current Question Display */}
-          <div className="w-full px-4 py-2.5 md:py-3.5 bg-[#0e1320] border-2 border-[#ffb800]/40 rounded-xl mt-4 mb-1 flex items-center justify-center shadow-[inset_0_0_20px_rgba(0,0,0,0.5)] relative overflow-hidden shrink-0">
+          {/* Current Question Display (Hidden on Stage by default, revealed when host toggles) */}
+          <div className="w-full px-4 py-2.5 md:py-3.5 bg-[#0e1320] border-2 border-[#ffb800]/40 rounded-xl mt-4 mb-1 flex items-center justify-center shadow-[inset_0_0_20px_rgba(0,0,0,0.5)] relative overflow-hidden shrink-0 min-h-[56px] md:min-h-[64px]">
             <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-[#ffb800]/50 to-transparent"></div>
-            <span className="font-bebas text-2xl md:text-3xl lg:text-4xl tracking-widest uppercase text-[#ffdca1] drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] text-center max-w-4xl px-2 leading-tight">
-              {currentQuestion?.text || 'WAITING FOR QUESTION...'}
-            </span>
+            {gameState.showQuestionOnStage ? (
+              <span className="font-bebas text-2xl md:text-3xl lg:text-4xl tracking-widest uppercase text-[#ffdca1] drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] text-center max-w-4xl px-2 leading-tight animate-in fade-in zoom-in-95 duration-200">
+                {currentQuestion?.text || 'WAITING FOR QUESTION...'}
+              </span>
+            ) : (
+              <div className="flex items-center space-x-3 text-[#9e8f78] animate-in fade-in duration-200">
+                <span className="w-2.5 h-2.5 rounded-full bg-[#ffb800] animate-pulse" />
+                <span className="font-bebas text-xl md:text-2xl lg:text-3xl tracking-widest uppercase text-[#9e8f78] drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] text-center max-w-4xl px-2 leading-tight">
+                  SURVEY QUESTION IN PLAY
+                </span>
+                <span className="w-2.5 h-2.5 rounded-full bg-[#ffb800] animate-pulse" />
+              </div>
+            )}
           </div>
 
           {/* 8 Survey Answer Flippers (Enlarged 2 Columns of 4, No Blank Holes) */}
@@ -632,6 +642,17 @@ export function StageGameboard({ onSwitchToHost }: StageGameboardProps = {}) {
           </div>
         </div>
       </div>
+
+      {/* Discreet floating switch to Host Console */}
+      {onSwitchToHost && (
+        <button
+          onClick={onSwitchToHost}
+          className="fixed bottom-3 right-3 z-50 pointer-events-auto opacity-35 hover:opacity-100 transition-opacity px-2.5 py-1.5 rounded-lg bg-[#0e1320]/90 hover:bg-[#171b29] border border-[#252a38] hover:border-[#ffb800]/50 text-[10px] font-mono-score font-bold uppercase tracking-wider text-[#9e8f78] hover:text-[#ffdca1] shadow-lg backdrop-blur-sm cursor-pointer"
+          title="Switch to Host Console"
+        >
+          ⚙ Host Console
+        </button>
+      )}
 
     </div>
   );

@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React from 'react';
 import { useGame } from '../context/GameContext';
 import { SurveyBank } from './SurveyBank';
 import {
@@ -14,20 +14,21 @@ import {
   XCircle,
   AlertTriangle,
   Music,
-  FolderOpen,
   Edit2,
   Tv,
   ExternalLink,
   Wifi,
   Radio,
-  Sliders
+  Sliders,
+  Lock
 } from 'lucide-react';
 
 interface HostConsoleProps {
   onSwitchToStage?: () => void;
+  onLogout?: () => void;
 }
 
-export function HostConsole({ onSwitchToStage }: HostConsoleProps) {
+export function HostConsole({ onSwitchToStage, onLogout }: HostConsoleProps) {
   const {
     gameState,
     currentQuestion,
@@ -51,22 +52,17 @@ export function HostConsole({ onSwitchToStage }: HostConsoleProps) {
     updateQuestionText,
     updateAnswer,
     playSfxDirect,
+    toggleQuestionVisibility,
     isConnected,
     latency,
     gameId,
   } = useGame();
-
-  const surveyBankRef = useRef<HTMLDivElement>(null);
 
   const team1 = gameState.teams[0] || { id: 'team-1', name: 'TEAM 1', score: 0, strikes: 0, color: '#00e3fd', captain: '', members: '' };
   const team2 = gameState.teams[1] || { id: 'team-2', name: 'TEAM 2', score: 0, strikes: 0, color: '#ffb800', captain: '', members: '' };
 
   const totalQuestionPoints =
     currentQuestion?.answers.reduce((acc, a) => acc + a.points, 0) || 0;
-
-  const scrollToSurveyBank = () => {
-    surveyBankRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
 
   const openProjectorWindow = () => {
     const url = `${window.location.origin}${window.location.pathname}?tab=stage&game=${gameId}`;
@@ -109,19 +105,21 @@ export function HostConsole({ onSwitchToStage }: HostConsoleProps) {
 
         {/* Action buttons & Room connectivity */}
         <div className="flex flex-wrap items-center gap-2.5">
-          <button
-            onClick={scrollToSurveyBank}
-            className="flex items-center space-x-1.5 px-3 py-2 rounded-lg bg-[#171b29] hover:bg-[#252a38] border border-[#ffb800]/40 text-xs font-semibold text-[#ffdca1] transition-all shadow-sm"
-          >
-            <FolderOpen className="w-4 h-4 text-[#ffb800]" />
-            <span>Survey Bank (CSV)</span>
-          </button>
-
+          {onLogout && (
+            <button
+              onClick={onLogout}
+              className="flex items-center space-x-1.5 px-3 py-2 rounded-lg bg-[#252a38] hover:bg-[#93000a]/30 border border-[#514532] hover:border-[#ef4444]/50 text-xs font-semibold text-[#dee2f5] hover:text-[#ffdad6] transition-all cursor-pointer"
+              title="Lock Host Console"
+            >
+              <Lock className="w-3.5 h-3.5 text-[#ef4444]" />
+              <span>Lock Console</span>
+            </button>
+          )}
 
           {onSwitchToStage && (
             <button
               onClick={onSwitchToStage}
-              className="flex items-center space-x-1.5 px-3 py-2 rounded-lg bg-[#252a38] hover:bg-[#343948] border border-[#514532] text-xs font-semibold text-[#dee2f5] transition-all"
+              className="flex items-center space-x-1.5 px-3 py-2 rounded-lg bg-[#252a38] hover:bg-[#343948] border border-[#514532] text-xs font-semibold text-[#dee2f5] transition-all cursor-pointer"
               title="Switch to Stage Dashboard in this window"
             >
               <Tv className="w-3.5 h-3.5 text-[#00e3fd]" />
@@ -518,14 +516,28 @@ export function HostConsole({ onSwitchToStage }: HostConsoleProps) {
             </span>
             <div className="flex items-center space-x-3">
               <span className="text-xs font-mono-score text-[#d5c4ab]">
-                SURVEY ID: {currentQuestion?.surveyId || '#482'} • {totalAnswersCount} ANSWERS TOTAL
+                SURVEY ID: {currentQuestion?.surveyId || '#482'} • {totalAnswersCount} ANSWERS
               </span>
               <button
-                onClick={scrollToSurveyBank}
-                className="flex items-center space-x-1 text-xs text-[#00e3fd] hover:text-[#bdf4ff] font-semibold underline"
+                onClick={toggleQuestionVisibility}
+                className={`flex items-center space-x-1.5 px-3 py-1 rounded-lg text-xs font-mono-score font-bold uppercase tracking-wider transition-all cursor-pointer ${
+                  gameState.showQuestionOnStage
+                    ? 'bg-[#ffb800] text-black hover:bg-[#ffc633] shadow-[0_0_15px_rgba(255,184,0,0.3)]'
+                    : 'bg-[#252a38] text-[#ffdca1] hover:bg-[#343948] border border-[#ffb800]/40'
+                }`}
+                title={gameState.showQuestionOnStage ? 'Question is visible on Stage. Click to hide.' : 'Question is hidden on Stage. Click to reveal.'}
               >
-                <FolderOpen className="w-3.5 h-3.5" />
-                <span>Jump to Survey Bank ↓</span>
+                {gameState.showQuestionOnStage ? (
+                  <>
+                    <Eye className="w-3.5 h-3.5 text-black" />
+                    <span>Stage: VISIBLE (Click to Hide)</span>
+                  </>
+                ) : (
+                  <>
+                    <EyeOff className="w-3.5 h-3.5 text-[#ffb800]" />
+                    <span>Stage: HIDDEN (Click to Reveal)</span>
+                  </>
+                )}
               </button>
             </div>
           </div>
@@ -626,7 +638,7 @@ export function HostConsole({ onSwitchToStage }: HostConsoleProps) {
       </section>
 
       {/* SECTION 3: SURVEY BANK & CSV INGESTION (Directly inside Host Console route) */}
-      <div ref={surveyBankRef}>
+      <div>
         <SurveyBank />
       </div>
 

@@ -7,20 +7,44 @@ import React, { useState, useEffect } from 'react';
 import { GameProvider } from './context/GameContext';
 import { HostConsole } from './components/HostConsole';
 import { StageGameboard } from './components/StageGameboard';
+import { AdminLogin } from './components/AdminLogin';
 
 function MainApp() {
+  const [isAdminAuthenticated, setIsAdminAuthenticated] = useState<boolean>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        return sessionStorage.getItem('ff_admin_auth') === 'true';
+      } catch {
+        return false;
+      }
+    }
+    return false;
+  });
+
+  const handleAdminLogout = () => {
+    try {
+      sessionStorage.removeItem('ff_admin_auth');
+    } catch {
+      // ignore
+    }
+    setIsAdminAuthenticated(false);
+  };
+
   const [currentView, setCurrentView] = useState<'host' | 'stage'>(() => {
     if (typeof window !== 'undefined') {
       const params = new URLSearchParams(window.location.search);
       const tab = params.get('tab') || params.get('view');
-      if (tab === 'stage') {
-        return 'stage';
+      if (tab === 'host') {
+        return 'host';
       }
-      if (window.location.pathname.toLowerCase() === '/stage') {
+      if (window.location.pathname.toLowerCase() === '/host') {
+        return 'host';
+      }
+      if (tab === 'stage' || window.location.pathname.toLowerCase() === '/stage') {
         return 'stage';
       }
     }
-    return 'host';
+    return 'stage';
   });
 
   // Sync route change with URL query parameter
@@ -38,10 +62,10 @@ function MainApp() {
     const handlePopState = () => {
       const params = new URLSearchParams(window.location.search);
       const tab = params.get('tab') || params.get('view');
-      if (tab === 'stage') {
-        setCurrentView('stage');
-      } else {
+      if (tab === 'host' || window.location.pathname.toLowerCase() === '/host') {
         setCurrentView('host');
+      } else {
+        setCurrentView('stage');
       }
     };
     window.addEventListener('popstate', handlePopState);
@@ -52,7 +76,17 @@ function MainApp() {
     <div className="min-h-screen bg-[#0e1320] text-[#dee2f5] flex flex-col font-space selection:bg-[#ffb800] selection:text-black">
       <main className="flex-1">
         {currentView === 'host' ? (
-          <HostConsole onSwitchToStage={() => handleViewChange('stage')} />
+          isAdminAuthenticated ? (
+            <HostConsole
+              onSwitchToStage={() => handleViewChange('stage')}
+              onLogout={handleAdminLogout}
+            />
+          ) : (
+            <AdminLogin
+              onLoginSuccess={() => setIsAdminAuthenticated(true)}
+              onBackToStage={() => handleViewChange('stage')}
+            />
+          )
         ) : (
           <div className="pt-2">
             <StageGameboard onSwitchToHost={() => handleViewChange('host')} />

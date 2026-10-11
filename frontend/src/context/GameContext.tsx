@@ -39,6 +39,8 @@ type GameContextType = {
   playSfxDirect: (sound: 'ding' | 'buzz' | 'strike3' | 'bell' | 'fanfare') => void;
   updateFastMoney: (payload: Partial<FastMoneyState>) => void;
   updateFastMoneyAnswer: (questionId: string, player: 1 | 2, answer: string, points: number) => void;
+  toggleQuestionVisibility: () => void;
+  setQuestionVisibility: (visible: boolean) => void;
 };
 
 const initialFallbackState: GameState = {
@@ -52,7 +54,7 @@ const initialFallbackState: GameState = {
   teams: [
     {
       id: 'team-1',
-      name: 'THE JOHNSONS',
+      name: 'TEAM A',
       score: 0,
       captain: 'Marcus',
       members: '',
@@ -61,7 +63,7 @@ const initialFallbackState: GameState = {
     },
     {
       id: 'team-2',
-      name: 'THE MILLERS',
+      name: 'TEAM B',
       score: 0,
       captain: 'Sarah',
       members: '',
@@ -71,6 +73,7 @@ const initialFallbackState: GameState = {
   ],
   questions: JSON.parse(JSON.stringify(DEFAULT_QUESTIONS)),
   fastMoney: JSON.parse(JSON.stringify(DEFAULT_FAST_MONEY)),
+  showQuestionOnStage: false,
   updatedAt: Date.now(),
 };
 
@@ -321,6 +324,8 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
     dispatchAction({ type: 'UPDATE_FAST_MONEY', payload });
   const updateFastMoneyAnswer = (questionId: string, player: 1 | 2, answer: string, points: number) =>
     dispatchAction({ type: 'UPDATE_FAST_MONEY_ANSWER', questionId, player, answer, points });
+  const toggleQuestionVisibility = () => dispatchAction({ type: 'TOGGLE_QUESTION_VISIBILITY' });
+  const setQuestionVisibility = (visible: boolean) => dispatchAction({ type: 'SET_QUESTION_VISIBILITY', visible });
 
   return (
     <GameContext.Provider
@@ -359,6 +364,8 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
         playSfxDirect,
         updateFastMoney,
         updateFastMoneyAnswer,
+        toggleQuestionVisibility,
+        setQuestionVisibility,
       }}
     >
       {children}

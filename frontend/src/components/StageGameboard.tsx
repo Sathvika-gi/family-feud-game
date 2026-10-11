@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useGame } from '../context/GameContext';
 import { Users, Trophy, Sparkles } from 'lucide-react';
 import confetti from 'canvas-confetti';
@@ -51,6 +51,12 @@ export function StageGameboard({ onSwitchToHost }: StageGameboardProps = {}) {
 
   const [showStrikeOverlay, setShowStrikeOverlay] = useState(false);
 
+  // Guards against replaying stale effects on page reload/mount
+  const isMountRef = useRef(true);
+  const lastStrikeSfxIdRef = useRef<string | null>(null);
+  const lastFanfareSfxIdRef = useRef<string | null>(null);
+  const lastWinnerTeamIdRef = useRef<string | null>(gameState.winnerTeamId || null);
+
   const team1 = gameState.teams[0] || { id: 'team-1', name: 'TEAM 1', score: 0, strikes: 0, color: '#00e3fd', members: '' };
   const team2 = gameState.teams[1] || { id: 'team-2', name: 'TEAM 2', score: 0, strikes: 0, color: '#ffb800', members: '' };
 
@@ -61,7 +67,14 @@ export function StageGameboard({ onSwitchToHost }: StageGameboardProps = {}) {
 
   // Target celebratory confetti shower directly over that particular winning participant
   useEffect(() => {
-    if (!gameState.winnerTeamId) return;
+    if (!gameState.winnerTeamId) {
+      lastWinnerTeamIdRef.current = null;
+      return;
+    }
+
+    // Only fire celebratory burst if newly declared, not on page reload
+    if (gameState.winnerTeamId === lastWinnerTeamIdRef.current) return;
+    lastWinnerTeamIdRef.current = gameState.winnerTeamId;
 
     const isTeam1 = gameState.winnerTeamId === team1?.id || gameState.winnerTeamId === 'team-1';
     // Pod horizontal centers: Stage Left ~0.16, Stage Right ~0.84
@@ -73,7 +86,7 @@ export function StageGameboard({ onSwitchToHost }: StageGameboardProps = {}) {
     // 1. Initial downward shower burst directly above the participant pod
     confetti({
       particleCount: 100,
-      angle: 270, // Rains DOWNWARDS over the participant
+      angle: 270,
       spread: 75,
       origin: { x: targetX, y: 0.0 },
       colors: teamColors,
@@ -87,7 +100,7 @@ export function StageGameboard({ onSwitchToHost }: StageGameboardProps = {}) {
     // 2. Angled cannon firing upwards from side towards that participant pod
     confetti({
       particleCount: 80,
-      angle: isTeam1 ? 55 : 125, // Arc inward towards the pod
+      angle: isTeam1 ? 55 : 125,
       spread: 55,
       origin: { x: isTeam1 ? 0.02 : 0.98, y: 0.65 },
       colors: teamColors,
@@ -103,7 +116,7 @@ export function StageGameboard({ onSwitchToHost }: StageGameboardProps = {}) {
       const jitterX = targetX + (Math.random() - 0.5) * 0.12;
       confetti({
         particleCount: 40,
-        angle: 270, // Rains DOWNWARDS
+        angle: 270,
         spread: 65,
         origin: { x: jitterX, y: -0.05 },
         colors: teamColors,
@@ -123,11 +136,16 @@ export function StageGameboard({ onSwitchToHost }: StageGameboardProps = {}) {
       clearInterval(showerInterval);
       clearTimeout(stopTimer);
     };
-  }, [gameState.winnerTeamId, gameState.lastSfx?.id, team1?.id]);
+  }, [gameState.winnerTeamId, team1?.id]);
 
   // General fanfare celebration if triggered without a specific winner
   useEffect(() => {
-    if (gameState.lastSfx?.sound === 'fanfare' && !gameState.winnerTeamId) {
+    if (!gameState.lastSfx?.id) return;
+    const isNew = gameState.lastSfx.id !== lastFanfareSfxIdRef.current;
+    const isRecent = Date.now() - (gameState.lastSfx.timestamp || 0) < 3000;
+
+    if (isNew && isRecent && gameState.lastSfx?.sound === 'fanfare' && !gameState.winnerTeamId) {
+      lastFanfareSfxIdRef.current = gameState.lastSfx.id;
       confetti({
         particleCount: 100,
         spread: 80,
@@ -137,12 +155,27 @@ export function StageGameboard({ onSwitchToHost }: StageGameboardProps = {}) {
     }
   }, [gameState.lastSfx, gameState.winnerTeamId]);
 
-  // Full-screen iconic X on strike / buzz
+  // Full-screen iconic X on strike / buzz (strictly for live events, NEVER on reload)
   useEffect(() => {
-    if (gameState.lastSfx?.sound === 'buzz' || gameState.lastSfx?.sound === 'strike3') {
-      setShowStrikeOverlay(true);
-      const timer = setTimeout(() => setShowStrikeOverlay(false), 1600);
-      return () => clearTimeout(timer);
+    // On first mount, absorb the current sfx id so page reload does NOT trigger the overlay
+    if (isMountRef.current) {
+      isMountRef.current = false;
+      lastStrikeSfxIdRef.current = gameState.lastSfx?.id || null;
+      return;
+    }
+
+    if (!gameState.lastSfx?.id) return;
+
+    const isNew = gameState.lastSfx.id !== lastStrikeSfxIdRef.current;
+    const isRecent = Date.now() - (gameState.lastSfx.timestamp || 0) < 3000;
+
+    if (isNew && isRecent) {
+      lastStrikeSfxIdRef.current = gameState.lastSfx.id;
+      if (gameState.lastSfx.sound === 'buzz' || gameState.lastSfx.sound === 'strike3') {
+        setShowStrikeOverlay(true);
+        const timer = setTimeout(() => setShowStrikeOverlay(false), 1600);
+        return () => clearTimeout(timer);
+      }
     }
   }, [gameState.lastSfx]);
 

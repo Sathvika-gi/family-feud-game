@@ -171,10 +171,13 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
             const data = JSON.parse(event.data);
             if (data.type === 'sync' && data.state) {
               setGameState(data.state);
-              // Handle sound effects from server
+              // Handle sound effects from server (strictly live events, never stale sounds on reload)
               if (data.state.lastSfx && data.state.lastSfx.id !== lastProcessedSfxIdRef.current) {
                 lastProcessedSfxIdRef.current = data.state.lastSfx.id;
-                playSfx(data.state.lastSfx.sound);
+                const isRecent = Date.now() - (data.state.lastSfx.timestamp || 0) < 3000;
+                if (isRecent) {
+                  playSfx(data.state.lastSfx.sound);
+                }
               }
             } else if (data.type === 'pong') {
               const rtt = Math.max(4, Date.now() - pingStartRef.current);

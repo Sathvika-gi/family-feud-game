@@ -94,7 +94,7 @@ export function AdminLogin({ onLoginSuccess, onBackToStage }: AdminLoginProps) {
                 CAMPUS LIFE
               </span>
               <span className="text-[10px] font-mono-score font-bold uppercase tracking-wider text-[#ffdca1] bg-[#ffb800]/20 px-2 py-0.5 rounded border border-[#ffb800]/30">
-                POUTPOURRI
+                POTPOURRI
               </span>
             </div>
             <h1 className="font-bebas text-3xl tracking-wider text-[#ffdca1] leading-tight">

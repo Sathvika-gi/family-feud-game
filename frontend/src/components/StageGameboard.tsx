@@ -331,7 +331,7 @@ export function StageGameboard({ onSwitchToHost }: StageGameboardProps = {}) {
 
         {/* CENTER POD: THE TOP 8 SURVEY ANSWERS GAMEBOARD (ENLARGED) */}
         <div className="lg:col-span-6 bg-[#171b29] border-2 border-[#252a38] rounded-2xl p-4 md:p-6 shadow-2xl flex flex-col justify-between min-h-[480px] md:min-h-[540px]">
-          {/* Gameboard Header with Event Branding (Campus Life • Poutpourri) & Live IN PLAY indicator */}
+          {/* Gameboard Header with Event Branding (Campus Life • Potpourri) & Live IN PLAY indicator */}
           <div className="flex items-center justify-between pb-3.5 border-b border-[#252a38] flex-wrap gap-3">
             <div className="flex items-center space-x-3.5">
               {/* Campus Life Logo */}
@@ -351,7 +351,7 @@ export function StageGameboard({ onSwitchToHost }: StageGameboardProps = {}) {
                 </div>
                 <div className="flex items-baseline space-x-2.5 mt-0.5">
                   <h1 className="font-bebas text-3xl md:text-5xl text-[#ffdca1] tracking-wider leading-none drop-shadow-[0_2px_8px_rgba(255,184,0,0.3)]">
-                    POUTPOURRI
+                    POTPOURRI
                   </h1>
                 </div>
               </div>

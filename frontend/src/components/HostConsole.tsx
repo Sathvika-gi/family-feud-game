@@ -91,7 +91,7 @@ export function HostConsole({ onSwitchToStage, onLogout }: HostConsoleProps) {
                 CAMPUS LIFE
               </span>
               <h1 className="font-bebas text-2xl md:text-3xl tracking-wider text-[#ffdca1] leading-none">
-                POUTPOURRI • HOST CONSOLE
+                POTPOURRI • HOST CONSOLE
               </h1>
               <span className="hidden sm:inline-flex items-center px-2 py-0.5 rounded text-[10px] font-mono-score font-bold bg-[#ffb800]/20 text-[#ffdca1] border border-[#ffb800]/40">
                 OPERATOR
@@ -384,8 +384,8 @@ export function HostConsole({ onSwitchToStage, onLogout }: HostConsoleProps) {
                 onClick={() => handleFinalCall(team1.id)}
                 disabled={team1.score < team2.score}
                 className={`w-full py-2.5 px-3 rounded-lg font-bebas text-base md:text-lg tracking-wide flex items-center justify-center space-x-2 transition-all ${team1.score >= team2.score
-                    ? 'bg-[#00e3fd] hover:bg-[#9cf0ff] text-black shadow-md active:scale-95'
-                    : 'bg-[#00e3fd]/10 text-[#00e3fd]/30 border border-[#00e3fd]/20 cursor-not-allowed'
+                  ? 'bg-[#00e3fd] hover:bg-[#9cf0ff] text-black shadow-md active:scale-95'
+                  : 'bg-[#00e3fd]/10 text-[#00e3fd]/30 border border-[#00e3fd]/20 cursor-not-allowed'
                   } ${gameState.winnerTeamId === team1.id ? 'ring-2 ring-white shadow-[0_0_20px_rgba(0,227,253,0.8)]' : ''}`}
                 title={team1.score >= team2.score ? `Trigger ${team1.name} as Final Winner on stage` : `Cannot select: ${team1.name} is losing on points`}
               >
@@ -396,8 +396,8 @@ export function HostConsole({ onSwitchToStage, onLogout }: HostConsoleProps) {
                 onClick={() => handleFinalCall(team2.id)}
                 disabled={team2.score < team1.score}
                 className={`w-full py-2.5 px-3 rounded-lg font-bebas text-base md:text-lg tracking-wide flex items-center justify-center space-x-2 transition-all ${team2.score >= team1.score
-                    ? 'bg-[#ffb800] hover:bg-[#ffc633] text-black shadow-md active:scale-95'
-                    : 'bg-[#ffb800]/10 text-[#ffb800]/30 border border-[#ffb800]/20 cursor-not-allowed'
+                  ? 'bg-[#ffb800] hover:bg-[#ffc633] text-black shadow-md active:scale-95'
+                  : 'bg-[#ffb800]/10 text-[#ffb800]/30 border border-[#ffb800]/20 cursor-not-allowed'
                   } ${gameState.winnerTeamId === team2.id ? 'ring-2 ring-white shadow-[0_0_20px_rgba(255,184,0,0.8)]' : ''}`}
                 title={team2.score >= team1.score ? `Trigger ${team2.name} as Final Winner on stage` : `Cannot select: ${team2.name} is losing on points`}
               >
@@ -520,11 +520,10 @@ export function HostConsole({ onSwitchToStage, onLogout }: HostConsoleProps) {
               </span>
               <button
                 onClick={toggleQuestionVisibility}
-                className={`flex items-center space-x-1.5 px-3 py-1 rounded-lg text-xs font-mono-score font-bold uppercase tracking-wider transition-all cursor-pointer ${
-                  gameState.showQuestionOnStage
+                className={`flex items-center space-x-1.5 px-3 py-1 rounded-lg text-xs font-mono-score font-bold uppercase tracking-wider transition-all cursor-pointer ${gameState.showQuestionOnStage
                     ? 'bg-[#ffb800] text-black hover:bg-[#ffc633] shadow-[0_0_15px_rgba(255,184,0,0.3)]'
                     : 'bg-[#252a38] text-[#ffdca1] hover:bg-[#343948] border border-[#ffb800]/40'
-                }`}
+                  }`}
                 title={gameState.showQuestionOnStage ? 'Question is visible on Stage. Click to hide.' : 'Question is hidden on Stage. Click to reveal.'}
               >
                 {gameState.showQuestionOnStage ? (

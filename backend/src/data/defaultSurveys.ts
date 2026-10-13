@@ -37,8 +37,8 @@ export const DEFAULT_QUESTIONS: Question[] = [
     text: 'Name a good place to go when you want to cry',
     totalRespondents: 262,
     answers: [
-      { id: 'a-3-1', rank: 1, text: 'Bedroom', points: 70, revealed: false },
-      { id: 'a-3-2', rank: 2, text: 'Bathroom', points: 59, revealed: false },
+      { id: 'a-3-1', rank: 1, text: 'Bathroom', points: 70, revealed: false },
+      { id: 'a-3-2', rank: 2, text: 'Bedroom', points: 59, revealed: false },
       { id: 'a-3-3', rank: 3, text: "Mom's lap", points: 48, revealed: false },
       { id: 'a-3-4', rank: 4, text: 'Friend', points: 37, revealed: false },
       { id: 'a-3-5', rank: 5, text: 'Terrace / balcony', points: 26, revealed: false },

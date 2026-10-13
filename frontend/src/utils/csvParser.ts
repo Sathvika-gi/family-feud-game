@@ -219,8 +219,8 @@ export const SAMPLE_SURVEY_CSV = `Question ID,Question,Rank,Answer,Points
 2,Name something people do in an elevator when they are alone,5,Dancing,26
 2,Name something people do in an elevator when they are alone,6,Farting,15
 2,Name something people do in an elevator when they are alone,7,Press all the buttons,7
-3,Name a good place to go when you want to cry,1,Bedroom,70
-3,Name a good place to go when you want to cry,2,Bathroom,59
+3,Name a good place to go when you want to cry,1,Bathroom,70
+3,Name a good place to go when you want to cry,2,Bedroom,59
 3,Name a good place to go when you want to cry,3,Mom's lap,48
 3,Name a good place to go when you want to cry,4,Friend,37
 3,Name a good place to go when you want to cry,5,Terrace / balcony,26

@@ -18,7 +18,7 @@ import {
   Shuffle
 } from 'lucide-react';
 
-const STORAGE_KEY = 'ff_survey_bank_questions_v2';
+const STORAGE_KEY = 'ff_survey_bank_questions_v3';
 
 export function SurveyBank() {
   const { loadQuestion, currentQuestion } = useGame();
